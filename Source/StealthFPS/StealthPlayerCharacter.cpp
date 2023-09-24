@@ -19,7 +19,7 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	firstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("First Person Camera"));
 	firstPersonCamera->SetupAttachment(GetCapsuleComponent());
-	firstPersonCamera->AddRelativeLocation(FVector(-39.65f, 1.75f, 64));
+	firstPersonCamera->AddRelativeLocation(FVector(20, 1.75f, 78));
 	firstPersonCamera->bUsePawnControlRotation = true;
 
 	bodyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Character Mesh"));
@@ -30,12 +30,27 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	bodyMesh->CastShadow = false;
 	bodyMesh->AddRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	bodyMesh->AddRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
+
+	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
+
+	gunMesh->SetOnlyOwnerSee(true);
+	gunMesh->bCastDynamicShadow = false;
+	gunMesh->CastShadow = false;
+
+	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
+
+	muzzleLocation->SetupAttachment(gunMesh);
+	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
+
+	gunOffset = FVector(100, 0, 10);
 }
 
 // Called when the game starts or when spawned
 void AStealthPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));
 	
 }
 
@@ -73,9 +88,15 @@ void AStealthPlayerCharacter::MoveRight(float axisValue)
 
 void AStealthPlayerCharacter::VerticalTurnAtRate(float rate)
 {
+	AddControllerYawInput(rate * turnVerticalRate * GetWorld()->GetDeltaSeconds());
 }
 
 void AStealthPlayerCharacter::HorizontalTurnAtRate(float rate)
+{
+	AddControllerPitchInput(rate * turnHorizontalRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AStealthPlayerCharacter::Crouch(float axisValue)
 {
 }
 

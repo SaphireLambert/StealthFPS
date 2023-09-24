@@ -57,4 +57,5 @@ protected:
 	void VerticalTurnAtRate(float rate);
 	void HorizontalTurnAtRate(float rate);
 
+	void Crouch(float axisValue);
 };
