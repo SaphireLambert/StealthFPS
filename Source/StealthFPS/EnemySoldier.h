@@ -35,5 +35,41 @@ public:
 		UPrimitiveComponent* otherComp, int32 otherBodyIndex, 
 		bool bFromSweep, const FHitResult& hit);
 
+	UPROPERTY(VisibleDefaultsOnly, Category = Enemy)
+	class UAIPerceptionComponent* AIPerceptionComponent;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = Enemy)
+	class UAISenseConfig_Sight* sightConfuguartion;
+
+	UFUNCTION()
+	void OnSensed(const TArray<AActor*>& updatedActors);
+
+	UPROPERTY(VisibleAnywhere, Category = Movement)
+	FRotator enemyRotation;
+
+	UPROPERTY(VisibleAnywhere, Category = Movement)
+	FVector baseLocation;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	FVector curentVelocity;
+
+	UPROPERTY(VisibleAnywhere, Category = Movement)
+	float movementSpeed;
+
+	void SetNewRotation(FVector targetPosition, FVector currentPosition);
+
+	bool backToBaseLocation;
+
+	FVector newLocation;
+
+	float distanceSquared;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float maxhealth = 100;
+
+	UPROPERTY(EditAnywhere)
+	float damageValue = 5;
+
+public:
+	void DealDamage(float damageAmount);
 };
