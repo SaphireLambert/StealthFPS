@@ -19,7 +19,7 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	firstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("First Person Camera"));
 	firstPersonCamera->SetupAttachment(GetCapsuleComponent());
-	firstPersonCamera->AddRelativeLocation(FVector(20, 1.75f, 78));
+	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
 	firstPersonCamera->bUsePawnControlRotation = true;
 
 	bodyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Character Mesh"));
@@ -65,11 +65,18 @@ void AStealthPlayerCharacter::Tick(float DeltaTime)
 void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &AStealthPlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AStealthPlayerCharacter::MoveRight);
 	PlayerInputComponent->BindAxis(TEXT("LookHorizontal"), this, &AStealthPlayerCharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAxis(TEXT("LookVertical"), this, &AStealthPlayerCharacter::AddControllerPitchInput);
-	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AStealthPlayerCharacter::Jump);
+
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
+
+	PlayerInputComponent->BindAction(TEXT("Shoot"), IE_Pressed, this, &AStealthPlayerCharacter::FireGun);
+
+	PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
+	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
 }
 
 void AStealthPlayerCharacter::FireGun()
@@ -96,8 +103,14 @@ void AStealthPlayerCharacter::HorizontalTurnAtRate(float rate)
 	AddControllerPitchInput(rate * turnHorizontalRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AStealthPlayerCharacter::Crouch(float axisValue)
+void AStealthPlayerCharacter::Crouch()
 {
+	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 50));
+}
+
+void AStealthPlayerCharacter::StopCrouch()
+{
+	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
 }
 
 

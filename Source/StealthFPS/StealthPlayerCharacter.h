@@ -54,8 +54,10 @@ protected:
 
 	void MoveForward(float axisValue);
 	void MoveRight(float axisValue);
+
 	void VerticalTurnAtRate(float rate);
 	void HorizontalTurnAtRate(float rate);
 
-	void Crouch(float axisValue);
+	void Crouch();
+	void StopCrouch();
 };
