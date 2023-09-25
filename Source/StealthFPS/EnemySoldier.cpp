@@ -21,13 +21,13 @@ AEnemySoldier::AEnemySoldier()
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception Component"));
 	sightConfuguartion = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Configuration"));
 
-	sightConfuguartion->SightRadius = 750;
-	sightConfuguartion->LoseSightRadius = 1000;
+	sightConfuguartion->SightRadius = 1250;
+	sightConfuguartion->LoseSightRadius = 1280;
 	sightConfuguartion->PeripheralVisionAngleDegrees = 90;
 	sightConfuguartion->DetectionByAffiliation.bDetectEnemies = true;
 	sightConfuguartion->DetectionByAffiliation.bDetectFriendlies = true;
 	sightConfuguartion->DetectionByAffiliation.bDetectNeutrals = true;
-	sightConfuguartion->SetMaxAge(0.9f);
+	sightConfuguartion->SetMaxAge(0.1f);
 
 	AIPerceptionComponent->ConfigureSense(*sightConfuguartion);
 	AIPerceptionComponent->SetDominantSense(sightConfuguartion->GetSenseImplementation());
@@ -53,13 +53,13 @@ void AEnemySoldier::BeginPlay()
 }
 
 // Called every frame
-void AEnemySoldier::Tick(float DeltaTime)
+void AEnemySoldier::Tick(float deltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(deltaTime);
 
 	if (!curentVelocity.IsZero())
 	{
-		newLocation = GetActorLocation() + curentVelocity * DeltaTime;
+		newLocation = GetActorLocation() + curentVelocity * deltaTime;
 
 		if (backToBaseLocation)
 		{
@@ -85,9 +85,9 @@ void AEnemySoldier::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void AEnemySoldier::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AEnemySoldier::SetupPlayerInputComponent(UInputComponent* playerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::SetupPlayerInputComponent(playerInputComponent);
 
 }
 

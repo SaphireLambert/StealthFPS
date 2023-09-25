@@ -21,10 +21,10 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float deltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* playerInputComponent) override;
 //Finn Edit From Here\/
 public:
 	UPROPERTY(EditAnywhere)
