@@ -65,12 +65,6 @@ public:
 	float playerHealth = 100; 
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<UUserWidget> playerHUDClass;
-
-	UPROPERTY()
-	UUserWidget* playerHUD;
-
 	UFUNCTION()
 	void InteractWithObject(UPrimitiveComponent* interactComp, AActor* otherActor,
 		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
