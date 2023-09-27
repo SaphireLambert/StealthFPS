@@ -30,7 +30,7 @@ public:
 //Finn Edit From Here\/
 public:
 	UPROPERTY(EditAnywhere)
-	class UBoxComponent* DamageCollision;
+	class UBoxComponent* damageCollision;
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* hitComp, AActor* otherActor, 
@@ -70,7 +70,7 @@ public:
 	float enemyHealth = 100;
 
 	UPROPERTY(EditAnywhere)
-	float damageValue = 50;
+	float damageValue = 100;
 
 public:
 	void DealDamage(float damageAmount);

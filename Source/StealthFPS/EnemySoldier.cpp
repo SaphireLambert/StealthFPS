@@ -15,8 +15,8 @@ AEnemySoldier::AEnemySoldier()
 
 	//Finn EDited \/
 
-	DamageCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Damage Collision"));
-	DamageCollision->SetupAttachment(RootComponent);
+	damageCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Damage Collision"));
+	damageCollision->SetupAttachment(RootComponent);
 
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception Component"));
 	sightConfuguartion = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Configuration"));
@@ -47,7 +47,7 @@ void AEnemySoldier::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemySoldier::OnHit);
+	damageCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemySoldier::OnHit);
 
 	baseLocation = this->GetActorLocation();
 }

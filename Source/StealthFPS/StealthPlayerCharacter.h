@@ -45,6 +45,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
 		class UCameraComponent* firstPersonCamera;
 
+	UPROPERTY(EditAnywhere)
+		class UBoxComponent* interactableDetection;
+
 	//The turn rate for the camera look variable Horizontal
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
 		float turnVerticalRate;
@@ -62,9 +65,17 @@ public:
 	float playerHealth = 100; 
 
 
-	UFUNCTION(BlueprintCallable)
-	void TakeDamage(float damageAmount);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<UUserWidget> playerHUDClass;
 
+	UPROPERTY()
+	UUserWidget* playerHUD;
+
+	UFUNCTION()
+	void InteractWithObject(UPrimitiveComponent* interactComp, AActor* otherActor,
+		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
+		bool bFromSweep, const FHitResult& interact);
+	
 	void DealDamage(float damageAmount);
 
 protected:

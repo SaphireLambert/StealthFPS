@@ -3,8 +3,11 @@
 
 #include "StealthPlayerCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include <Subsystems/PanelExtensionSubsystem.h>
+
 
 // Sets default values before instanciation 
 AStealthPlayerCharacter::AStealthPlayerCharacter()
@@ -28,10 +31,10 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	bodyMesh->SetOnlyOwnerSee(true);
 	bodyMesh->SetupAttachment(firstPersonCamera);
-	/*bodyMesh->bCastDynamicShadow = false;
+	bodyMesh->bCastDynamicShadow = false;
 	bodyMesh->CastShadow = false;
 	bodyMesh->AddRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
-	bodyMesh->AddRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));*/
+	bodyMesh->AddRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
 	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
 
@@ -45,6 +48,9 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
 
 	gunOffset = FVector(100, 0, 10);
+
+	interactableDetection = CreateDefaultSubobject<UBoxComponent>(TEXT("Interactable Detection"));
+	interactableDetection->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -53,6 +59,11 @@ void AStealthPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));
+
+	interactableDetection->OnComponentBeginOverlap.AddDynamic(this, &AStealthPlayerCharacter::InteractWithObject);
+
+
+
 	
 }
 
@@ -79,19 +90,20 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 	PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
+
+	//PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::InteractWithObject);
 }
 
-void AStealthPlayerCharacter::TakeDamage(float damageAmount)
+void AStealthPlayerCharacter::InteractWithObject(UPrimitiveComponent* interactComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& interact)
 {
-	playerHealth -= damageAmount;
-	if (playerHealth < 0)
-	{
-		playerHealth = 0;
-	}
+
+	//if(otherActor == )
+
 }
 
 void AStealthPlayerCharacter::FireGun()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Shot Gun"));
 }
 
 void AStealthPlayerCharacter::MoveForward(float axisValue)
@@ -133,6 +145,8 @@ void AStealthPlayerCharacter::DealDamage(float damageAmount)
 		//restart Game Player Dead
 
 		Destroy();
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player Dies"));
+		
 	}
 }
 
