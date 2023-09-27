@@ -94,6 +94,15 @@ void AEnemySoldier::SetupPlayerInputComponent(UInputComponent* playerInputCompon
 void AEnemySoldier::OnHit(UPrimitiveComponent* hitComp, AActor* otherActor, 
 UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit)
 {
+
+	AStealthPlayerCharacter* Char = Cast<AStealthPlayerCharacter>(otherActor);
+
+	if (Char)
+	{
+		Char->DealDamage(damageValue);
+		UE_LOG(LogTemp, Warning, TEXT("Player Got HIT"));
+	}
+
 }
 
 void AEnemySoldier::OnSensed(const TArray<AActor*>& updatedActors)
@@ -148,5 +157,11 @@ void AEnemySoldier::SetNewRotation(FVector targetPosition, FVector currentPositi
 
 void AEnemySoldier::DealDamage(float damageAmount)
 {
+	enemyHealth -= damageAmount;
+
+	if (enemyHealth <= 0)
+	{
+		Destroy();
+	}
 }
 

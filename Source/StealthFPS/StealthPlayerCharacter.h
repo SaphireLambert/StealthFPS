@@ -24,29 +24,48 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;\
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-public:
+	//Finn Has Edited \/
+
+public: 
+	//Created the skeletal Mesh Component for the player character in the editor
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		class USkeletalMeshComponent* bodyMesh;
 
+	//Created the gun skeletal mesh in the editor
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		class USkeletalMeshComponent* gunMesh;
 
+	//Creates location for the muzzle location
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		class USceneComponent* muzzleLocation;
 
+	//Creates first person camera component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
 		class UCameraComponent* firstPersonCamera;
 
+	//The turn rate for the camera look variable Horizontal
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
 		float turnVerticalRate;
 
+	//The turn rate for the camera look variable Vertical
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
 		float turnHorizontalRate;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		FVector gunOffset;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
+	float playerHealth = 100; 
+
+
+	UFUNCTION(BlueprintCallable)
+	void TakeDamage(float damageAmount);
+
+	void DealDamage(float damageAmount);
 
 protected:
 

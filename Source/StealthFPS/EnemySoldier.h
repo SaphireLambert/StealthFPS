@@ -25,6 +25,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* playerInputComponent) override;
+
+
 //Finn Edit From Here\/
 public:
 	UPROPERTY(EditAnywhere)
@@ -64,11 +66,11 @@ public:
 
 	float distanceSquared;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float maxhealth = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
+	float enemyHealth = 100;
 
 	UPROPERTY(EditAnywhere)
-	float damageValue = 5;
+	float damageValue = 50;
 
 public:
 	void DealDamage(float damageAmount);

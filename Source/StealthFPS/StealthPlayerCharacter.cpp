@@ -6,13 +6,15 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 
-// Sets default values
+// Sets default values before instanciation 
 AStealthPlayerCharacter::AStealthPlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	GetCapsuleComponent()->InitCapsuleSize(40, 95);
+	//Finn has edited \/
+
+	GetCapsuleComponent()->InitCapsuleSize(40, 95); // Sets the size for the capsule component for the player character. 
 
 	turnHorizontalRate = 45;
 	turnVerticalRate = 45;
@@ -26,10 +28,10 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	bodyMesh->SetOnlyOwnerSee(true);
 	bodyMesh->SetupAttachment(firstPersonCamera);
-	bodyMesh->bCastDynamicShadow = false;
+	/*bodyMesh->bCastDynamicShadow = false;
 	bodyMesh->CastShadow = false;
 	bodyMesh->AddRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
-	bodyMesh->AddRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
+	bodyMesh->AddRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));*/
 
 	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
 
@@ -79,6 +81,15 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
 }
 
+void AStealthPlayerCharacter::TakeDamage(float damageAmount)
+{
+	playerHealth -= damageAmount;
+	if (playerHealth < 0)
+	{
+		playerHealth = 0;
+	}
+}
+
 void AStealthPlayerCharacter::FireGun()
 {
 }
@@ -111,6 +122,18 @@ void AStealthPlayerCharacter::Crouch()
 void AStealthPlayerCharacter::StopCrouch()
 {
 	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
+}
+
+void AStealthPlayerCharacter::DealDamage(float damageAmount)
+{
+	playerHealth -= damageAmount;
+
+	if (playerHealth <= 0)
+	{
+		//restart Game Player Dead
+
+		Destroy();
+	}
 }
 
 
