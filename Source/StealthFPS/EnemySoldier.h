@@ -23,9 +23,6 @@ public:
 	// Called every frame
 	virtual void Tick(float deltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* playerInputComponent) override;
-
 
 //Finn Edit From Here\/
 public:

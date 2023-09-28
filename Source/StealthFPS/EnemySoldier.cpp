@@ -84,13 +84,6 @@ void AEnemySoldier::Tick(float deltaTime)
 
 }
 
-// Called to bind functionality to input
-void AEnemySoldier::SetupPlayerInputComponent(UInputComponent* playerInputComponent)
-{
-	Super::SetupPlayerInputComponent(playerInputComponent);
-
-}
-
 void AEnemySoldier::OnHit(UPrimitiveComponent* hitComp, AActor* otherActor, 
 UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit)
 {

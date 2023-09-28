@@ -88,8 +88,8 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 	PlayerInputComponent->BindAction(TEXT("Shoot"), IE_Pressed, this, &AStealthPlayerCharacter::FireGun);
 
-	PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
-	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
+	//PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
+	//PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
 
 	//PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::InteractWithObject);
 }
@@ -126,15 +126,15 @@ void AStealthPlayerCharacter::HorizontalTurnAtRate(float rate)
 	AddControllerPitchInput(rate * turnHorizontalRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AStealthPlayerCharacter::Crouch()
-{
-	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 50));
-}
-
-void AStealthPlayerCharacter::StopCrouch()
-{
-	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
-}
+//void AStealthPlayerCharacter::Crouch()
+//{
+//	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 50));
+//}
+//
+//void AStealthPlayerCharacter::StopCrouch()
+//{
+//	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
+//}
 
 void AStealthPlayerCharacter::DealDamage(float damageAmount)
 {

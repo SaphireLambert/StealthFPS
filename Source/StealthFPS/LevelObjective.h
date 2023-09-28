@@ -27,11 +27,19 @@ public:
 
 
 	//Finn Edited \/
+public:
+	UFUNCTION()
+	void onOverLap(UPrimitiveComponent* hitComp, AActor* otherActor,
+		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
+		bool bFromSweep, const FHitResult& hit);
 
 private:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	UBoxComponent* overlapComponent;
+	UPROPERTY(EditAnywhere)
+	class UBoxComponent* overlapComponent;
+
+	UPROPERTY(EditAnywhere)
+	class UMeshComponent* visualComponent;
 
 
 };
