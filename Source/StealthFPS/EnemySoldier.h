@@ -66,9 +66,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
 	float enemyHealth = 100;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
 	float damageValue = 100;
 
+	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
+
 public:
-	void DealDamage(float damageAmount);
+
 };

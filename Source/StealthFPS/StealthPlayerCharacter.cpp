@@ -2,11 +2,13 @@
 
 
 #include "StealthPlayerCharacter.h"
+#include "EnemySoldier.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include <Subsystems/PanelExtensionSubsystem.h>
+#include "Engine/DamageEvents.h"
+//#include <Subsystems/PanelExtensionSubsystem.h>
 
 
 // Sets default values before instanciation 
@@ -97,13 +99,53 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 void AStealthPlayerCharacter::InteractWithObject(UPrimitiveComponent* interactComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& interact)
 {
 
-	//if(otherActor == )
+	
 
+}
+
+float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
+{
+	float damageCaused = Super::TakeDamage(damageAmount, damageEvent, eventInstigator, damageCauser);
+	damageCaused = FMath::Min(playerHealth, damageCaused);
+
+	playerHealth -= damageCaused;
+
+	if (playerHealth <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player has died"));
+	}
+	
+	return damageCaused;
 }
 
 void AStealthPlayerCharacter::FireGun()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Shot Gun"));
+	FHitResult hit;
+
+	const float weaponRange = 1000;
+	const FVector startTrace = muzzleLocation->GetComponentLocation();
+	const FVector forwardVector = firstPersonCamera->GetForwardVector();
+	const FVector endTrace = (forwardVector * weaponRange) + startTrace;
+
+	FCollisionQueryParams queryparameters;
+	queryparameters.AddIgnoredActor(this);
+
+	bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_Camera, queryparameters);
+
+	//AEnemySoldier* enemyCharacter = Cast<AEnemySoldier>(this);
+
+	if (isHit)
+	{
+		FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr);
+		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);
+
+
+
+		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Red, true);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Somthing"));
+			
+	}
+	
 }
 
 void AStealthPlayerCharacter::MoveForward(float axisValue)
@@ -136,18 +178,5 @@ void AStealthPlayerCharacter::HorizontalTurnAtRate(float rate)
 //	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
 //}
 
-void AStealthPlayerCharacter::DealDamage(float damageAmount)
-{
-	playerHealth -= damageAmount;
-
-	if (playerHealth <= 0)
-	{
-		//restart Game Player Dead
-
-		Destroy();
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player Dies"));
-		
-	}
-}
 
 

@@ -32,7 +32,7 @@ void ALevelObjective::onOverLap(UPrimitiveComponent* hitComp, AActor* otherActor
 	AStealthPlayerCharacter* Char = Cast<AStealthPlayerCharacter>(otherActor);
 	if (Char)
 	{
-		FGenericPlatformMisc::RequestExit(true);
+		FGenericPlatformMisc::RequestExit(false);
 	}
 }
 

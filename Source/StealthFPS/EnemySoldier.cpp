@@ -6,6 +6,7 @@
 #include "StealthPlayerCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 AEnemySoldier::AEnemySoldier()
@@ -21,9 +22,9 @@ AEnemySoldier::AEnemySoldier()
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception Component"));
 	sightConfuguartion = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Configuration"));
 
-	sightConfuguartion->SightRadius = 1250;
-	sightConfuguartion->LoseSightRadius = 1280;
-	sightConfuguartion->PeripheralVisionAngleDegrees = 90;
+	sightConfuguartion->SightRadius = 1000;
+	sightConfuguartion->LoseSightRadius = 1055;
+	sightConfuguartion->PeripheralVisionAngleDegrees = 60;
 	sightConfuguartion->DetectionByAffiliation.bDetectEnemies = true;
 	sightConfuguartion->DetectionByAffiliation.bDetectFriendlies = true;
 	sightConfuguartion->DetectionByAffiliation.bDetectNeutrals = true;
@@ -88,13 +89,6 @@ void AEnemySoldier::OnHit(UPrimitiveComponent* hitComp, AActor* otherActor,
 UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit)
 {
 
-	AStealthPlayerCharacter* Char = Cast<AStealthPlayerCharacter>(otherActor);
-
-	if (Char)
-	{
-		Char->DealDamage(damageValue);
-		UE_LOG(LogTemp, Warning, TEXT("Player Got HIT"));
-	}
 
 }
 
@@ -148,13 +142,21 @@ void AEnemySoldier::SetNewRotation(FVector targetPosition, FVector currentPositi
 
 }
 
-void AEnemySoldier::DealDamage(float damageAmount)
+float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
 {
-	enemyHealth -= damageAmount;
+	float damageCaused = Super::TakeDamage(damageAmount, damageEvent, eventInstigator, damageCauser);
+	damageCaused = FMath::Min(enemyHealth, damageCaused);
 
-	if (enemyHealth <= 0)
+	enemyHealth -= damageCaused;
+	if (enemyHealth <= 0) 
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Enemy Died"));
 		Destroy();
 	}
+
+
+	return damageCaused;
 }
+
+
 

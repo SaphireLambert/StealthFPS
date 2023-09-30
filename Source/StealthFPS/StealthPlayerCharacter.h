@@ -64,13 +64,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
 	float playerHealth = 100; 
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
+	float playerDamage = 100;
 
 	UFUNCTION()
 	void InteractWithObject(UPrimitiveComponent* interactComp, AActor* otherActor,
 		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
 		bool bFromSweep, const FHitResult& interact);
 	
-	void DealDamage(float damageAmount);
+	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
 
 protected:
 
@@ -82,6 +84,6 @@ protected:
 	void VerticalTurnAtRate(float rate);
 	void HorizontalTurnAtRate(float rate);
 
-	void Crouch();
-	void StopCrouch();
+	//void Crouch();
+	//void StopCrouch();
 };
