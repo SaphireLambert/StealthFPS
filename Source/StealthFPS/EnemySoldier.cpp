@@ -7,6 +7,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Engine/DamageEvents.h"
+#include "BehaviorTree/BehaviorTree.h"
 
 // Sets default values
 AEnemySoldier::AEnemySoldier()
@@ -16,29 +17,29 @@ AEnemySoldier::AEnemySoldier()
 
 	//Finn EDited \/
 
-	damageCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Damage Collision"));
-	damageCollision->SetupAttachment(RootComponent);
+	//damageCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Damage Collision"));
+	//damageCollision->SetupAttachment(RootComponent);
 
-	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception Component"));
-	sightConfuguartion = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Configuration"));
+	//AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception Component"));
+	//sightConfuguartion = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Configuration"));
 
-	sightConfuguartion->SightRadius = 1000;
-	sightConfuguartion->LoseSightRadius = 1055;
-	sightConfuguartion->PeripheralVisionAngleDegrees = 60;
-	sightConfuguartion->DetectionByAffiliation.bDetectEnemies = true;
-	sightConfuguartion->DetectionByAffiliation.bDetectFriendlies = true;
-	sightConfuguartion->DetectionByAffiliation.bDetectNeutrals = true;
-	sightConfuguartion->SetMaxAge(0.1f);
+	//sightConfuguartion->SightRadius = 1000;
+	//sightConfuguartion->LoseSightRadius = 1055;
+	//sightConfuguartion->PeripheralVisionAngleDegrees = 60;
+	//sightConfuguartion->DetectionByAffiliation.bDetectEnemies = true;
+	//sightConfuguartion->DetectionByAffiliation.bDetectFriendlies = true;
+	//sightConfuguartion->DetectionByAffiliation.bDetectNeutrals = true;
+	//sightConfuguartion->SetMaxAge(0.1f);
 
-	AIPerceptionComponent->ConfigureSense(*sightConfuguartion);
-	AIPerceptionComponent->SetDominantSense(sightConfuguartion->GetSenseImplementation());
-	AIPerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AEnemySoldier::OnSensed);
+	//AIPerceptionComponent->ConfigureSense(*sightConfuguartion);
+	//AIPerceptionComponent->SetDominantSense(sightConfuguartion->GetSenseImplementation());
+	//AIPerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AEnemySoldier::OnSensed);
 
 
-	curentVelocity = FVector::ZeroVector;
-	movementSpeed = 375;
+	//curentVelocity = FVector::ZeroVector;
+	//movementSpeed = 375;
 
-	distanceSquared = BIG_NUMBER;
+	//distanceSquared = BIG_NUMBER;
 
 
 }
@@ -50,7 +51,7 @@ void AEnemySoldier::BeginPlay()
 	
 	damageCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemySoldier::OnHit);
 
-	baseLocation = this->GetActorLocation();
+	//baseLocation = this->GetActorLocation();
 }
 
 // Called every frame
@@ -58,89 +59,46 @@ void AEnemySoldier::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
 
-	if (!curentVelocity.IsZero())
-	{
-		newLocation = GetActorLocation() + curentVelocity * deltaTime;
+	//if (!curentVelocity.IsZero())
+	//{
+	//	newLocation = GetActorLocation() + curentVelocity * deltaTime;
 
-		if (backToBaseLocation)
-		{
+	//	if (backToBaseLocation)
+	//	{
 
-			if ((newLocation - baseLocation).SizeSquared2D() < distanceSquared) 
-			{
+	//		if ((newLocation - baseLocation).SizeSquared2D() < distanceSquared) 
+	//		{
 
-				distanceSquared = (newLocation - baseLocation).SizeSquared2D();
+	//			distanceSquared = (newLocation - baseLocation).SizeSquared2D();
 
-			}
-			else
-			{
-				curentVelocity = FVector::ZeroVector;
-				distanceSquared = BIG_NUMBER;
-				backToBaseLocation = false;
+	//		}
+	//		else
+	//		{
+	//			curentVelocity = FVector::ZeroVector;
+	//			distanceSquared = BIG_NUMBER;
+	//			backToBaseLocation = false;
 
-				SetNewRotation(GetActorForwardVector(), GetActorLocation());
-			}
-		}
-		SetActorLocation(newLocation);
-	}
+	//			SetNewRotation(GetActorForwardVector(), GetActorLocation());
+	//		}
+	//	}
+	//	SetActorLocation(newLocation);
+	//}
 
 }
 
-void AEnemySoldier::OnHit(UPrimitiveComponent* hitComp, AActor* otherActor, 
+
+UBehaviorTree* AEnemySoldier::GetBehaviorTree() const
+{
+	return enemyBehaviourTree;
+}
+
+void AEnemySoldier::OnHit(UPrimitiveComponent* hitComp, AActor* otherActor,
 UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& hit)
 {
 
 
 }
 
-void AEnemySoldier::OnSensed(const TArray<AActor*>& updatedActors)
-{
-
-	for (int i = 0; i < updatedActors.Num(); i++)
-	{
-		FActorPerceptionBlueprintInfo info;
-
-		AIPerceptionComponent->GetActorsPerception(updatedActors[i], info);
-
-		if (info.LastSensedStimuli[0].WasSuccessfullySensed()) 
-		{
-			FVector direction = updatedActors[i]->GetActorLocation() - GetActorLocation();
-			direction.Z = 0;
-
-			curentVelocity = direction.GetSafeNormal() * movementSpeed;
-
-			SetNewRotation(updatedActors[i]->GetActorLocation(), GetActorLocation());
-
-		}
-		else 
-		{
-			FVector direction = baseLocation - GetActorLocation();
-			direction.Z = 0;
-
-			if (direction.SizeSquared2D() > 1)
-			{
-				curentVelocity = direction.GetSafeNormal() * movementSpeed;
-
-				backToBaseLocation = true;
-
-				SetNewRotation(baseLocation, GetActorLocation());
-			}
-
-		}
-	}
-
-}
-
-void AEnemySoldier::SetNewRotation(FVector targetPosition, FVector currentPosition)
-{
-
-	FVector newDirection = targetPosition - currentPosition;
-	newDirection.Z = 0;
-
-	enemyRotation = newDirection.Rotation();
-
-	SetActorRotation(enemyRotation);
-
-}
 
 float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
 {

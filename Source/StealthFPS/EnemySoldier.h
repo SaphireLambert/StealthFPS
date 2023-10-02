@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "EnemySoldier.generated.h"
+
 
 UCLASS()
 class STEALTHFPS_API AEnemySoldier : public ACharacter
@@ -26,6 +28,9 @@ public:
 
 //Finn Edit From Here\/
 public:
+
+	UBehaviorTree* GetBehaviorTree() const;
+
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* damageCollision;
 
@@ -33,35 +38,6 @@ public:
 	void OnHit(UPrimitiveComponent* hitComp, AActor* otherActor, 
 		UPrimitiveComponent* otherComp, int32 otherBodyIndex, 
 		bool bFromSweep, const FHitResult& hit);
-
-	UPROPERTY(VisibleDefaultsOnly, Category = Enemy)
-	class UAIPerceptionComponent* AIPerceptionComponent;
-
-	UPROPERTY(VisibleDefaultsOnly, Category = Enemy)
-	class UAISenseConfig_Sight* sightConfuguartion;
-
-	UFUNCTION()
-	void OnSensed(const TArray<AActor*>& updatedActors);
-
-	UPROPERTY(VisibleAnywhere, Category = Movement)
-	FRotator enemyRotation;
-
-	UPROPERTY(VisibleAnywhere, Category = Movement)
-	FVector baseLocation;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
-	FVector curentVelocity;
-
-	UPROPERTY(VisibleAnywhere, Category = Movement)
-	float movementSpeed;
-
-	void SetNewRotation(FVector targetPosition, FVector currentPosition);
-
-	bool backToBaseLocation;
-
-	FVector newLocation;
-
-	float distanceSquared;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
 	float enemyHealth = 100;
@@ -71,6 +47,10 @@ public:
 
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
 
-public:
+protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	UBehaviorTree* enemyBehaviourTree;
+
 
 };
