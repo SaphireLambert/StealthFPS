@@ -33,12 +33,15 @@ void AEnemyAI_Controller::OnPossess(APawn* inPawn)
 void AEnemyAI_Controller::SetupPerceptionSystem()
 {
 	sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Configuration"));
+
 	if (sightConfig)
 	{
 		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
+
 		sightConfig->SightRadius = 500;
 		sightConfig->LoseSightRadius = sightConfig->SightRadius + 25;
 		sightConfig->PeripheralVisionAngleDegrees = 90;
+		sightConfig->SetMaxAge(5);
 		sightConfig->AutoSuccessRangeFromLastSeenLocation = 520;
 		sightConfig->DetectionByAffiliation.bDetectEnemies = true;
 		sightConfig->DetectionByAffiliation.bDetectFriendlies = true;

@@ -8,8 +8,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Engine/DamageEvents.h"
-#include "Perception/AISense_Sight.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 
 //#include <Subsystems/PanelExtensionSubsystem.h>
 
@@ -137,7 +137,6 @@ void AStealthPlayerCharacter::FireGun()
 
 	bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_Camera, queryparameters);
 
-	//AEnemySoldier* enemyCharacter = Cast<AEnemySoldier>(this);
 
 	if (isHit)
 	{
@@ -175,12 +174,12 @@ void AStealthPlayerCharacter::HorizontalTurnAtRate(float rate)
 
 void AStealthPlayerCharacter::SetupStimuliSource()
 {
-	//StimulusSource = CreateDefaultSubobject<UAIPerceptionStimiliSourceComponent>(TEXT("Stimulus"));
-	//if (StimulusSource)
-	//{
-	//	/*StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
-	//	StimulusSource->RegisterWithPerceptionSystem();*/
-	//}
+	StimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
+	if (StimulusSource)
+	{
+		StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
+		StimulusSource->RegisterWithPerceptionSystem();
+	}
 }
 
 void AStealthPlayerCharacter::ExitGame()
