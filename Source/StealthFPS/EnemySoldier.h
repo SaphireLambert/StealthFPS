@@ -27,30 +27,13 @@ public:
 
 
 //Finn Edit From Here\/
-public:
 
 	UBehaviorTree* GetBehaviorTree() const;
 
-	UPROPERTY(EditAnywhere)
-	class UBoxComponent* damageCollision;
-
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* hitComp, AActor* otherActor, 
-		UPrimitiveComponent* otherComp, int32 otherBodyIndex, 
-		bool bFromSweep, const FHitResult& hit);
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
-	float enemyHealth = 100;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
-	float damageValue = 100;
-
-	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
-
 protected:
+	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
+	UBehaviorTree* Tree;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	UBehaviorTree* enemyBehaviourTree;
 
 
 };

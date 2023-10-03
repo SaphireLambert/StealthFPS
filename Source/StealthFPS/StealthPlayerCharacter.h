@@ -86,4 +86,9 @@ protected:
 
 	//void Crouch();
 	//void StopCrouch();
+private:
+	//class UAIPerceptionStimiliSourceComponent* StimulusSource;
+	void SetupStimuliSource();
+
+	void ExitGame();
 };

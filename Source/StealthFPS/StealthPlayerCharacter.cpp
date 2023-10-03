@@ -8,6 +8,9 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Engine/DamageEvents.h"
+#include "Perception/AISense_Sight.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+
 //#include <Subsystems/PanelExtensionSubsystem.h>
 
 
@@ -53,6 +56,8 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	interactableDetection = CreateDefaultSubobject<UBoxComponent>(TEXT("Interactable Detection"));
 	interactableDetection->SetupAttachment(RootComponent);
+
+	SetupStimuliSource();
 }
 
 // Called when the game starts or when spawned
@@ -166,6 +171,21 @@ void AStealthPlayerCharacter::VerticalTurnAtRate(float rate)
 void AStealthPlayerCharacter::HorizontalTurnAtRate(float rate)
 {
 	AddControllerPitchInput(rate * turnHorizontalRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AStealthPlayerCharacter::SetupStimuliSource()
+{
+	//StimulusSource = CreateDefaultSubobject<UAIPerceptionStimiliSourceComponent>(TEXT("Stimulus"));
+	//if (StimulusSource)
+	//{
+	//	/*StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
+	//	StimulusSource->RegisterWithPerceptionSystem();*/
+	//}
+}
+
+void AStealthPlayerCharacter::ExitGame()
+{
+
 }
 
 //void AStealthPlayerCharacter::Crouch()

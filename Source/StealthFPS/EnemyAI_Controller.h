@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "EnemyAI_Controller.generated.h"
 
 /**
@@ -16,8 +17,16 @@ class STEALTHFPS_API AEnemyAI_Controller : public AAIController
 	
 public:
 
-	explicit AEnemyAI_Controller(FObjectInitializer const& onjectInitializer);
+	explicit AEnemyAI_Controller(FObjectInitializer const& objectInitializer);
 
 protected:
+
 	virtual void OnPossess(APawn* inPawn) override;
+private:
+	class UAISenseConfig_Sight* sightConfig;
+
+	void SetupPerceptionSystem();
+
+	UFUNCTION()
+	void OnTargetDectected(AActor* actor, FAIStimulus const stimulus);
 };
