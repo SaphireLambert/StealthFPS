@@ -122,7 +122,7 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 
 	if (playerHealth <= 0)
 	{
-		Destroy();
+		//Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("Player has died"));
 	}
 	
