@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/SphereComponent.h"
+#include "LevelObjective.h"
 #include "StealthPlayerCharacter.generated.h"
 
 UCLASS()
@@ -45,8 +47,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
 		class UCameraComponent* firstPersonCamera;
 
-	UPROPERTY(EditAnywhere)
-		class UBoxComponent* interactableDetection;
 
 	//The turn rate for the camera look variable Horizontal
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
@@ -60,17 +60,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		FVector gunOffset;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, category = "Pickup")
+		float interactionRange;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
 	float playerHealth = 100; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
 	float playerDamage = 100;
-
-	UFUNCTION()
-	void InteractWithObject(UPrimitiveComponent* interactComp, AActor* otherActor,
-		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
-		bool bFromSweep, const FHitResult& interact);
 	
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
 
@@ -84,11 +82,15 @@ protected:
 	void VerticalTurnAtRate(float rate);
 	void HorizontalTurnAtRate(float rate);
 
+	void InteractWithObject();
+
 	//void Crouch();
 	//void StopCrouch();
 private:
 	class UAIPerceptionStimuliSourceComponent* StimulusSource;
 	void SetupStimuliSource();
+
+
 
 	void ExitGame();
 };

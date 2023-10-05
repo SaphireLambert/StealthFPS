@@ -4,12 +4,12 @@
 #include "StealthPlayerCharacter.h"
 #include "EnemySoldier.h"
 #include "Camera/CameraComponent.h"
-#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "LevelObjective.h"
 
 //#include <Subsystems/PanelExtensionSubsystem.h>
 
@@ -54,8 +54,7 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	gunOffset = FVector(100, 0, 10);
 
-	interactableDetection = CreateDefaultSubobject<UBoxComponent>(TEXT("Interactable Detection"));
-	interactableDetection->SetupAttachment(RootComponent);
+	interactionRange = 300;
 
 	SetupStimuliSource();
 }
@@ -65,11 +64,7 @@ void AStealthPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));
-
-	interactableDetection->OnComponentBeginOverlap.AddDynamic(this, &AStealthPlayerCharacter::InteractWithObject);
-
-
+	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
 
 	
 }
@@ -78,6 +73,23 @@ void AStealthPlayerCharacter::BeginPlay()
 void AStealthPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	FHitResult hitresult;
+	FCollisionQueryParams collisionRules;
+	FVector startlocation = firstPersonCamera->GetComponentLocation();
+	FVector endLocation = (firstPersonCamera->GetForwardVector() * interactionRange) + startlocation;
+	if (GetWorld()->LineTraceSingleByChannel(hitresult, startlocation, endLocation, ECC_Visibility, collisionRules))
+	{
+
+		if (hitresult.bBlockingHit)
+		{
+		
+			if (auto interactableActor = Cast<ALevelObjective>(hitresult.GetActor()))
+			{
+				interactableActor->DisplayInteractPrompt(interactableActor->GetName());
+			}
+		}
+	}
 
 }
 
@@ -98,14 +110,7 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	//PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
 	//PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
 
-	//PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::InteractWithObject);
-}
-
-void AStealthPlayerCharacter::InteractWithObject(UPrimitiveComponent* interactComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& interact)
-{
-
-	
-
+	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::InteractWithObject);
 }
 
 float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
@@ -117,6 +122,7 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 
 	if (playerHealth <= 0)
 	{
+		Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("Player has died"));
 	}
 	
@@ -127,7 +133,7 @@ void AStealthPlayerCharacter::FireGun()
 {
 	FHitResult hit;
 
-	const float weaponRange = 1000;
+	const float weaponRange = 2000;
 	const FVector startTrace = muzzleLocation->GetComponentLocation();
 	const FVector forwardVector = firstPersonCamera->GetForwardVector();
 	const FVector endTrace = (forwardVector * weaponRange) + startTrace;
@@ -170,6 +176,11 @@ void AStealthPlayerCharacter::VerticalTurnAtRate(float rate)
 void AStealthPlayerCharacter::HorizontalTurnAtRate(float rate)
 {
 	AddControllerPitchInput(rate * turnHorizontalRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AStealthPlayerCharacter::InteractWithObject()
+{
+
 }
 
 void AStealthPlayerCharacter::SetupStimuliSource()

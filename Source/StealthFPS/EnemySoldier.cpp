@@ -16,7 +16,8 @@ AEnemySoldier::AEnemySoldier()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Finn Edited \/
-
+	killBox = CreateDefaultSubobject<UBoxComponent>(TEXT("killBox"));
+	killBox->SetupAttachment(RootComponent);
 
 
 }
@@ -25,6 +26,7 @@ AEnemySoldier::AEnemySoldier()
 void AEnemySoldier::BeginPlay()
 {
 	Super::BeginPlay();
+	killBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemySoldier::CauseDamageToPlayer);
 }
 
 // Called every frame
@@ -37,6 +39,39 @@ UBehaviorTree* AEnemySoldier::GetBehaviorTree() const
 {
 	return Tree;
 }
+
+void AEnemySoldier::CauseDamageToPlayer(UPrimitiveComponent* interactComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& interact)
+{
+	if (auto playerCharacter = Cast<AStealthPlayerCharacter>(otherActor))
+	{
+		playerCharacter->TakeDamage(100, FDamageEvent(), GetInstigatorController(), this);
+	}
+	
+}
+
+float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
+{
+	if (Health <= 0)
+	{
+		return 0;
+	}
+
+	float DamageCaused = Super::TakeDamage(damageAmount, damageEvent, eventInstigator, damageCauser);
+	DamageCaused = FMath::Min(Health, DamageCaused);
+
+	Health -= DamageCaused;
+
+	if (Health <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Enemy has Died"));
+		//DisableInput(GetWorld()->EnemyAI_Controller());
+		GetMesh()->SetSimulatePhysics(true);
+	}
+
+	return damageAmount;
+}
+
+
 
 
 

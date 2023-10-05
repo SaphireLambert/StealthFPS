@@ -30,6 +30,20 @@ public:
 
 	UBehaviorTree* GetBehaviorTree() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* killBox;
+
+	UFUNCTION()
+	void CauseDamageToPlayer(UPrimitiveComponent* interactComp, AActor* otherActor,
+		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
+		bool bFromSweep, const FHitResult& interact);
+
+	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
+
+
+	UPROPERTY(EditAnywhere)
+	float Health = 100;
+
 protected:
 	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* Tree;

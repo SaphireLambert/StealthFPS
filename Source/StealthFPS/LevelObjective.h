@@ -5,7 +5,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include <Components/BoxComponent.h>
+#include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "LevelObjective.generated.h"
 
 UCLASS()
@@ -27,19 +28,9 @@ public:
 
 
 	//Finn Edited \/
-public:
-	UFUNCTION()
-	void onOverLap(UPrimitiveComponent* hitComp, AActor* otherActor,
-		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
-		bool bFromSweep, const FHitResult& hit);
 
-private:
-
-	UPROPERTY(EditAnywhere)
-	class UBoxComponent* overlapComponent;
-
-	UPROPERTY(EditAnywhere)
-	class UMeshComponent* visualComponent;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interact")
+	void DisplayInteractPrompt(const FString& actorName);
 
 
 };
