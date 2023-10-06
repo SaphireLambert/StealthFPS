@@ -18,6 +18,7 @@ AEnemySoldier::AEnemySoldier()
 	//Finn Edited \/
 	killBox = CreateDefaultSubobject<UBoxComponent>(TEXT("killBox"));
 	killBox->SetupAttachment(RootComponent);
+	killBox->SetRelativeLocation(FVector(50, 0, 0));
 
 
 }
