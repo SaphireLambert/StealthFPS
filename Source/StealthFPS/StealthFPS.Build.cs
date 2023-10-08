@@ -18,6 +18,7 @@ public class StealthFPS : ModuleRules
 			"AIModule",
 			"GameplayTasks",
 			"NavigationSystem",
+			"UMG",
 		});
 
 

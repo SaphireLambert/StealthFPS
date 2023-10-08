@@ -6,7 +6,10 @@
 #include "GameFramework/Character.h"
 #include "Components/SphereComponent.h"
 #include "LevelObjective.h"
+#include "Templates/SubclassOf.h"
+#include "PlayerHUDWidget.h"
 #include "StealthPlayerCharacter.generated.h"
+
 
 UCLASS()
 class STEALTHFPS_API AStealthPlayerCharacter : public ACharacter
@@ -21,6 +24,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,44 +37,60 @@ public:
 
 public: 
 	//Created the skeletal Mesh Component for the player character in the editor
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
 		class USkeletalMeshComponent* bodyMesh;
 
 	//Created the gun skeletal mesh in the editor
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
 		class USkeletalMeshComponent* gunMesh;
 
 	//Creates location for the muzzle location
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
 		class USceneComponent* muzzleLocation;
 
 	//Creates first person camera component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
 		class UCameraComponent* firstPersonCamera;
 
 
 	//The turn rate for the camera look variable Horizontal
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
 		float turnVerticalRate;
 
 	//The turn rate for the camera look variable Vertical
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
 		float turnHorizontalRate;
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	
+	//Stores the position of the gunmesh
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 		FVector gunOffset;
 
+	//The range we want the chatater to be able to interact with an object
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, category = "Pickup")
 		float interactionRange;
 
+	//Store the players current health
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
+	float playerCurrentHealth; 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
-	float playerHealth = 100; 
+	//Store the players maximum health
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
+	float playerMaxHealth = 100;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterAttributes)
-	float playerDamage = 100;
+	//Stores the player damage
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
+	float pistolDamage = 100;
+
+
+	//Couldnt get UI Widget to display through code
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UPlayerHUDWidget> PlayerHUDClass;
+
+	UPROPERTY()
+	class UPlayerHUDWidget* PlayerHUD;
 	
+	//a float that can be called to deal damage to the player from other classes 
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
 
 protected:
@@ -84,8 +105,8 @@ protected:
 
 	void InteractWithObject();
 
-	//void Crouch();
-	//void StopCrouch();
+	void Crouch();
+	void StopCrouch();
 private:
 	class UAIPerceptionStimuliSourceComponent* StimulusSource;
 	void SetupStimuliSource();

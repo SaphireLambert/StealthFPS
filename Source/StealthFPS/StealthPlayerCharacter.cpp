@@ -10,6 +10,8 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "LevelObjective.h"
+#include "PlayerHUDWidget.h"
+#include "Blueprint/UserWidget.h"
 
 //#include <Subsystems/PanelExtensionSubsystem.h>
 
@@ -22,16 +24,18 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	//Finn has edited \/
 
-	GetCapsuleComponent()->InitCapsuleSize(40, 95); // Sets the size for the capsule component for the player character. 
+	GetCapsuleComponent()->InitCapsuleSize(20, 95); // Sets the size for the capsule component for the player character. 
 
 	turnHorizontalRate = 45;
 	turnVerticalRate = 45;
 
+	//Setip for the first person camera
 	firstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("First Person Camera"));
 	firstPersonCamera->SetupAttachment(GetCapsuleComponent());
 	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
 	firstPersonCamera->bUsePawnControlRotation = true;
 
+	//Setip for the body mesh
 	bodyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Character Mesh"));
 
 	bodyMesh->SetOnlyOwnerSee(true);
@@ -41,22 +45,31 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	bodyMesh->AddRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	bodyMesh->AddRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
+	//Setup for the gun mesh
 	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
 
 	gunMesh->SetOnlyOwnerSee(true);
 	gunMesh->bCastDynamicShadow = false;
 	gunMesh->CastShadow = false;
 
+	//Setup for the gun muzzle
 	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
 
 	muzzleLocation->SetupAttachment(gunMesh);
 	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
+
+	//Setup for the player health
+	playerCurrentHealth = playerMaxHealth;
 
 	gunOffset = FVector(100, 0, 10);
 
 	interactionRange = 300;
 
 	SetupStimuliSource();
+
+	//HUD
+	PlayerHUDClass;
+	PlayerHUD;
 }
 
 // Called when the game starts or when spawned
@@ -66,7 +79,15 @@ void AStealthPlayerCharacter::BeginPlay()
 
 	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
 
-	
+	//Couldnt get widget tro display through code
+	if (IsValid(PlayerHUDClass))
+	{
+		PlayerHUD = Cast<UPlayerHUDWidget>(CreateWidget(GetWorld(), PlayerHUDClass));
+		if (PlayerHUD)
+		{
+			PlayerHUD->AddToViewport();
+		}
+	}
 }
 
 // Called every frame
@@ -107,8 +128,8 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 	PlayerInputComponent->BindAction(TEXT("Shoot"), IE_Pressed, this, &AStealthPlayerCharacter::FireGun);
 
-	//PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
-	//PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
+	PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
+	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
 
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::InteractWithObject);
 }
@@ -116,11 +137,12 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
 {
 	float damageCaused = Super::TakeDamage(damageAmount, damageEvent, eventInstigator, damageCauser);
-	damageCaused = FMath::Min(playerHealth, damageCaused);
 
-	playerHealth -= damageCaused;
+	damageCaused = FMath::Min(playerCurrentHealth, damageCaused);
 
-	if (playerHealth <= 0)
+	playerCurrentHealth -= damageCaused;
+
+	if (playerCurrentHealth <= 0)
 	{
 		//Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("Player has died"));
@@ -198,15 +220,15 @@ void AStealthPlayerCharacter::ExitGame()
 
 }
 
-//void AStealthPlayerCharacter::Crouch()
-//{
-//	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 50));
-//}
-//
-//void AStealthPlayerCharacter::StopCrouch()
-//{
-//	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
-//}
+void AStealthPlayerCharacter::Crouch()
+{
+	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 50));
+}
+
+void AStealthPlayerCharacter::StopCrouch()
+{
+	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
+}
 
 
 
