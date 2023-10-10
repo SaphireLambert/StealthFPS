@@ -7,7 +7,6 @@
 #include "Components/SphereComponent.h"
 #include "LevelObjective.h"
 #include "Templates/SubclassOf.h"
-#include "PlayerHUDWidget.h"
 #include "StealthPlayerCharacter.generated.h"
 
 
@@ -71,7 +70,7 @@ public:
 		float interactionRange;
 
 	//Store the players current health
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttributes")
 	float playerCurrentHealth; 
 
 	//Store the players maximum health
@@ -81,14 +80,6 @@ public:
 	//Stores the player damage
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
 	float pistolDamage = 100;
-
-
-	//Couldnt get UI Widget to display through code
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UPlayerHUDWidget> PlayerHUDClass;
-
-	UPROPERTY()
-	class UPlayerHUDWidget* PlayerHUD;
 	
 	//a float that can be called to deal damage to the player from other classes 
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
@@ -105,8 +96,8 @@ protected:
 
 	void InteractWithObject();
 
-	void Crouch();
-	void StopCrouch();
+	//void Crouch();
+	//void StopCrouch();
 private:
 	class UAIPerceptionStimuliSourceComponent* StimulusSource;
 	void SetupStimuliSource();

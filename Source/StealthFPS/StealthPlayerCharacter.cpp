@@ -10,7 +10,6 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "LevelObjective.h"
-#include "PlayerHUDWidget.h"
 #include "Blueprint/UserWidget.h"
 
 //#include <Subsystems/PanelExtensionSubsystem.h>
@@ -66,10 +65,6 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	interactionRange = 300;
 
 	SetupStimuliSource();
-
-	//HUD
-	PlayerHUDClass;
-	PlayerHUD;
 }
 
 // Called when the game starts or when spawned
@@ -78,16 +73,6 @@ void AStealthPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
-
-	//Couldnt get widget tro display through code
-	if (IsValid(PlayerHUDClass))
-	{
-		PlayerHUD = Cast<UPlayerHUDWidget>(CreateWidget(GetWorld(), PlayerHUDClass));
-		if (PlayerHUD)
-		{
-			PlayerHUD->AddToViewport();
-		}
-	}
 }
 
 // Called every frame
@@ -128,8 +113,8 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 	PlayerInputComponent->BindAction(TEXT("Shoot"), IE_Pressed, this, &AStealthPlayerCharacter::FireGun);
 
-	PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
-	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
+	//PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
+	//PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
 
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::InteractWithObject);
 }
@@ -144,7 +129,7 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 
 	if (playerCurrentHealth <= 0)
 	{
-		//Destroy();
+		Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("Player has died"));
 	}
 	
@@ -220,15 +205,15 @@ void AStealthPlayerCharacter::ExitGame()
 
 }
 
-void AStealthPlayerCharacter::Crouch()
-{
-	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 50));
-}
-
-void AStealthPlayerCharacter::StopCrouch()
-{
-	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
-}
+//void AStealthPlayerCharacter::Crouch()
+//{
+//	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 50));
+//}
+//
+//void AStealthPlayerCharacter::StopCrouch()
+//{
+//	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
+//}
 
 
 

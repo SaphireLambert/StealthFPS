@@ -40,11 +40,14 @@ public:
 
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
 
+	UPROPERTY(EditAnywhere)
+	class AEnemyAI_Controller* EnemyControllerClass;
 
 	UPROPERTY(EditAnywhere)
 	float Health = 100;
 
 protected:
+
 	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* Tree;
 

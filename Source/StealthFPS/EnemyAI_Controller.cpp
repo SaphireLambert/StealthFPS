@@ -38,8 +38,8 @@ void AEnemyAI_Controller::SetupPerceptionSystem()
 	{
 		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
 
-		sightConfig->SightRadius = 500;
-		sightConfig->LoseSightRadius = sightConfig->SightRadius + 25;
+		sightConfig->SightRadius = 1000;
+		sightConfig->LoseSightRadius = sightConfig->SightRadius + 100;
 		sightConfig->PeripheralVisionAngleDegrees = 90;
 		sightConfig->SetMaxAge(5);
 		sightConfig->AutoSuccessRangeFromLastSeenLocation = 520;
@@ -60,4 +60,10 @@ void AEnemyAI_Controller::OnTargetDectected(AActor* actor, FAIStimulus const sti
 	{
 		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", stimulus.WasSuccessfullySensed());
 	}
+}
+
+void AEnemyAI_Controller::DestroyController()
+{
+
+	AActor::Destroy();
 }

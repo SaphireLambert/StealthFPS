@@ -3,11 +3,14 @@
 
 #include "EnemySoldier.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/Actor.h"
 #include "StealthPlayerCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Engine/DamageEvents.h"
+#include "GameFramework/Controller.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "EnemyAI_Controller.h"
 
 // Sets default values
 AEnemySoldier::AEnemySoldier()
@@ -19,7 +22,6 @@ AEnemySoldier::AEnemySoldier()
 	killBox = CreateDefaultSubobject<UBoxComponent>(TEXT("killBox"));
 	killBox->SetupAttachment(RootComponent);
 	killBox->SetRelativeLocation(FVector(50, 0, 0));
-
 
 }
 
@@ -45,7 +47,7 @@ void AEnemySoldier::CauseDamageToPlayer(UPrimitiveComponent* interactComp, AActo
 {
 	if (auto playerCharacter = Cast<AStealthPlayerCharacter>(otherActor))
 	{
-		playerCharacter->TakeDamage(100, FDamageEvent(), GetInstigatorController(), this);
+		playerCharacter->TakeDamage(20, FDamageEvent(), GetInstigatorController(), this);
 	}
 	
 }
@@ -65,8 +67,10 @@ float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEv
 	if (Health <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Enemy has Died"));
-		//DisableInput(GetWorld()->EnemyAI_Controller());
 		GetMesh()->SetSimulatePhysics(true);
+		SetLifeSpan(2);
+		//Attempt to disbale/Destroy the controller to the enemy AI doesnt follow player around as  invisible pawn. 
+		//EnemyControllerClass->DestroyController(); //Crashed the engine when called
 	}
 
 	return damageAmount;
