@@ -65,10 +65,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 		FVector gunOffset;
 
-	//The range we want the chatater to be able to interact with an object
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, category = "Pickup")
-		float interactionRange;
-
 	//Store the players current health
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttributes")
 	float playerCurrentHealth; 
@@ -80,6 +76,12 @@ public:
 	//Stores the player damage
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
 	float pistolDamage = 100;
+
+	//Reference to the UI prompt Widget
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> WidgetClass;
+	UUserWidget* interactableUI;
+
 	
 	//a float that can be called to deal damage to the player from other classes 
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
@@ -94,10 +96,12 @@ protected:
 	void VerticalTurnAtRate(float rate);
 	void HorizontalTurnAtRate(float rate);
 
-	void InteractWithObject();
+	void StartCrouch();
+	void StopCrouch();
 
-	//void Crouch();
-	//void StopCrouch();
+	void InteractWithObject();
+	void ShowInteractWidget();
+
 private:
 	class UAIPerceptionStimuliSourceComponent* StimulusSource;
 	void SetupStimuliSource();

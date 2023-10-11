@@ -9,7 +9,8 @@
 #include "Engine/DamageEvents.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
-#include "LevelObjective.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerController.h"
 #include "Blueprint/UserWidget.h"
 
 //#include <Subsystems/PanelExtensionSubsystem.h>
@@ -57,12 +58,13 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	muzzleLocation->SetupAttachment(gunMesh);
 	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
 
+	interactableUI = CreateDefaultSubobject<UUserWidget>(TEXT("Interactable UI"));
+
 	//Setup for the player health
 	playerCurrentHealth = playerMaxHealth;
 
 	gunOffset = FVector(100, 0, 10);
 
-	interactionRange = 300;
 
 	SetupStimuliSource();
 }
@@ -73,6 +75,8 @@ void AStealthPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
+
+	bool bIsCrouching = false;
 }
 
 // Called every frame
@@ -80,22 +84,22 @@ void AStealthPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FHitResult hitresult;
-	FCollisionQueryParams collisionRules;
-	FVector startlocation = firstPersonCamera->GetComponentLocation();
-	FVector endLocation = (firstPersonCamera->GetForwardVector() * interactionRange) + startlocation;
-	if (GetWorld()->LineTraceSingleByChannel(hitresult, startlocation, endLocation, ECC_Visibility, collisionRules))
-	{
+	//FHitResult hitresult;
+	//FCollisionQueryParams collisionRules;
+	//FVector startlocation = firstPersonCamera->GetComponentLocation();
+	//FVector endLocation = (firstPersonCamera->GetForwardVector() * interactionRange) + startlocation;
+	//if (GetWorld()->LineTraceSingleByChannel(hitresult, startlocation, endLocation, ECC_Visibility, collisionRules))
+	//{
 
-		if (hitresult.bBlockingHit)
-		{
-		
-			if (auto interactableActor = Cast<ALevelObjective>(hitresult.GetActor()))
-			{
-				interactableActor->DisplayInteractPrompt(interactableActor->GetName());
-			}
-		}
-	}
+	//	//if (hitresult.bBlockingHit)
+	//	//{
+	//	//
+	//	//	if (auto interactableActor = Cast<ALevelObjective>(hitresult.GetActor()))
+	//	//	{
+	//	//		//interactableActor->DisplayInteractPrompt(interactableActor->GetName());
+	//	//	}
+	//	//}
+	//}
 
 }
 
@@ -113,8 +117,7 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 	PlayerInputComponent->BindAction(TEXT("Shoot"), IE_Pressed, this, &AStealthPlayerCharacter::FireGun);
 
-	//PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &AStealthPlayerCharacter::Crouch);
-	//PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
+	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &AStealthPlayerCharacter::StartCrouch);
 
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::InteractWithObject);
 }
@@ -129,7 +132,7 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 
 	if (playerCurrentHealth <= 0)
 	{
-		Destroy();
+		
 		UE_LOG(LogTemp, Warning, TEXT("Player has died"));
 	}
 	
@@ -165,6 +168,7 @@ void AStealthPlayerCharacter::FireGun()
 	
 }
 
+
 void AStealthPlayerCharacter::MoveForward(float axisValue)
 {
 	AddMovementInput(GetActorForwardVector() * axisValue);
@@ -185,9 +189,39 @@ void AStealthPlayerCharacter::HorizontalTurnAtRate(float rate)
 	AddControllerPitchInput(rate * turnHorizontalRate * GetWorld()->GetDeltaSeconds());
 }
 
+void AStealthPlayerCharacter::StartCrouch() 
+{
+	if (!bIsCrouched)
+	{
+		Crouch();
+		bIsCrouched = true;
+	}
+
+}
+void AStealthPlayerCharacter::StopCrouch()
+{
+	//if (bIsCrouched)
+	//{
+	//	UnCrouch()
+	//	bIsCrouched = false;
+	//}
+}
+
 void AStealthPlayerCharacter::InteractWithObject()
 {
 
+}
+
+void AStealthPlayerCharacter::ShowInteractWidget()
+{
+	if (WidgetClass)
+	{
+		interactableUI = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
+		if (interactableUI)
+		{
+			interactableUI->AddToViewport();
+		}
+	}
 }
 
 void AStealthPlayerCharacter::SetupStimuliSource()
@@ -204,16 +238,6 @@ void AStealthPlayerCharacter::ExitGame()
 {
 
 }
-
-//void AStealthPlayerCharacter::Crouch()
-//{
-//	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 50));
-//}
-//
-//void AStealthPlayerCharacter::StopCrouch()
-//{
-//	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
-//}
 
 
 

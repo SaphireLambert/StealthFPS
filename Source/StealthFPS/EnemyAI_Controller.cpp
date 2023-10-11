@@ -11,7 +11,6 @@
 AEnemyAI_Controller::AEnemyAI_Controller(FObjectInitializer const& onjectInitializer)
 {
 	SetupPerceptionSystem();
-
 }
 
 void AEnemyAI_Controller::OnPossess(APawn* inPawn)
@@ -62,8 +61,3 @@ void AEnemyAI_Controller::OnTargetDectected(AActor* actor, FAIStimulus const sti
 	}
 }
 
-void AEnemyAI_Controller::DestroyController()
-{
-
-	AActor::Destroy();
-}

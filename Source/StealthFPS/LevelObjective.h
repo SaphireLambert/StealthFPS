@@ -5,8 +5,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/StaticMeshComponent.h"
-#include "Components/BoxComponent.h"
 #include "LevelObjective.generated.h"
 
 UCLASS()
@@ -28,9 +26,6 @@ public:
 
 
 	//Finn Edited \/
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Interact")
-	void DisplayInteractPrompt(const FString& actorName);
 
 
 };

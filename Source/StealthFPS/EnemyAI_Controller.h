@@ -19,9 +19,6 @@ public:
 
 	explicit AEnemyAI_Controller(FObjectInitializer const& objectInitializer);
 
-	UFUNCTION()
-	void DestroyController();
-
 protected:
 
 	virtual void OnPossess(APawn* inPawn) override;

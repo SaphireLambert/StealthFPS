@@ -28,6 +28,7 @@ public:
 
 //Finn Edit From Here\/
 
+
 	UBehaviorTree* GetBehaviorTree() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -39,6 +40,8 @@ public:
 		bool bFromSweep, const FHitResult& interact);
 
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
+
+	void EnemyDied();
 
 	UPROPERTY(EditAnywhere)
 	class AEnemyAI_Controller* EnemyControllerClass;

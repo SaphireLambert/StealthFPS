@@ -11,6 +11,8 @@
 #include "GameFramework/Controller.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "EnemyAI_Controller.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AEnemySoldier::AEnemySoldier()
@@ -22,7 +24,6 @@ AEnemySoldier::AEnemySoldier()
 	killBox = CreateDefaultSubobject<UBoxComponent>(TEXT("killBox"));
 	killBox->SetupAttachment(RootComponent);
 	killBox->SetRelativeLocation(FVector(50, 0, 0));
-
 }
 
 // Called when the game starts or when spawned
@@ -49,7 +50,6 @@ void AEnemySoldier::CauseDamageToPlayer(UPrimitiveComponent* interactComp, AActo
 	{
 		playerCharacter->TakeDamage(20, FDamageEvent(), GetInstigatorController(), this);
 	}
-	
 }
 
 float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
@@ -66,14 +66,21 @@ float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEv
 
 	if (Health <= 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Enemy has Died"));
-		GetMesh()->SetSimulatePhysics(true);
-		SetLifeSpan(2);
-		//Attempt to disbale/Destroy the controller to the enemy AI doesnt follow player around as  invisible pawn. 
-		//EnemyControllerClass->DestroyController(); //Crashed the engine when called
+		EnemyDied();
 	}
 
 	return damageAmount;
+}
+
+void AEnemySoldier::EnemyDied()
+{
+	GetMesh()->SetSimulatePhysics(true);//Creates the ragdol effect
+
+	DetachFromControllerPendingDestroy();//Detaches the enemy AI controller to that its no longer active afer the enemy is dead. 
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Attempt at deactivating collision with the capsule for the enemy!!
+
+	killBox->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disables the kill box component so the player doesnt pass through and take damage after the enemy is dead
 }
 
 
