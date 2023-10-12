@@ -1,8 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+// GAME
 
 #include "StealthPlayerCharacter.h"
 #include "EnemySoldier.h"
+
+// ENGINE
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -12,8 +15,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Blueprint/UserWidget.h"
-
-//#include <Subsystems/PanelExtensionSubsystem.h>
 
 
 // Sets default values before instanciation 
@@ -58,50 +59,18 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	muzzleLocation->SetupAttachment(gunMesh);
 	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
 
-	interactableUI = CreateDefaultSubobject<UUserWidget>(TEXT("Interactable UI"));
-
 	//Setup for the player health
 	playerCurrentHealth = playerMaxHealth;
 
 	gunOffset = FVector(100, 0, 10);
 
+	interactioCheckFrequency = 0.1f;
+	interactionCheckDistance = 225;
 
 	SetupStimuliSource();
 }
 
-// Called when the game starts or when spawned
-void AStealthPlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
 
-	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
-
-	bool bIsCrouching = false;
-}
-
-// Called every frame
-void AStealthPlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	//FHitResult hitresult;
-	//FCollisionQueryParams collisionRules;
-	//FVector startlocation = firstPersonCamera->GetComponentLocation();
-	//FVector endLocation = (firstPersonCamera->GetForwardVector() * interactionRange) + startlocation;
-	//if (GetWorld()->LineTraceSingleByChannel(hitresult, startlocation, endLocation, ECC_Visibility, collisionRules))
-	//{
-
-	//	//if (hitresult.bBlockingHit)
-	//	//{
-	//	//
-	//	//	if (auto interactableActor = Cast<ALevelObjective>(hitresult.GetActor()))
-	//	//	{
-	//	//		//interactableActor->DisplayInteractPrompt(interactableActor->GetName());
-	//	//	}
-	//	//}
-	//}
-
-}
 
 // Called to bind functionality to input
 void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -119,7 +88,155 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &AStealthPlayerCharacter::StartCrouch);
 
-	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::InteractWithObject);
+	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::BeginInteract);
+	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Released, this, &AStealthPlayerCharacter::EndInteract);
+}
+
+// Called when the game starts or when spawned
+void AStealthPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
+
+}
+
+// Called every frame
+void AStealthPlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (GetWorld()->TimeSince(interactionData.lastInteractionCheckTime) > interactioCheckFrequency)
+	{
+		PerformInteractionCheck();
+	}
+}
+
+void AStealthPlayerCharacter::PerformInteractionCheck()
+{
+	interactionData.lastInteractionCheckTime = GetWorld()->GetTimeSeconds();
+
+	FVector startTrace{GetPawnViewLocation()};
+	FVector endTrace{startTrace + (GetViewRotation().Vector() * interactionCheckDistance)};
+
+	float LookDirection = FVector::DotProduct(GetActorForwardVector(), GetViewRotation().Vector());
+
+	if (LookDirection > 0)
+	{
+
+		FCollisionQueryParams queryParams;
+		queryParams.AddIgnoredActor(this);
+		FHitResult traceHit;
+
+		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, false, 1.0, 0, 2.0f);
+
+		if (GetWorld()->LineTraceSingleByChannel(traceHit, startTrace, endTrace, ECC_Visibility, queryParams))
+		{
+			if (traceHit.GetActor()->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+			{
+				const float distance = (startTrace - traceHit.ImpactPoint).Size();
+
+				if (traceHit.GetActor() != interactionData.currentInteractable && distance <= interactionCheckDistance)
+				{
+					FoundInteractable(traceHit.GetActor());
+					return;
+				}
+				if (traceHit.GetActor() == interactionData.currentInteractable)
+				{
+					return;
+				}
+			}
+		}
+		NoInteractableFound();
+	}
+}
+
+void AStealthPlayerCharacter::FoundInteractable(AActor* newInteractable)
+{
+	if (IsInteracting())
+	{
+		EndInteract();
+	}
+
+	if (interactionData.currentInteractable)
+	{
+		targetInteractable = interactionData.currentInteractable;
+		targetInteractable->EndFocus();
+	}
+
+	interactionData.currentInteractable = newInteractable;
+	targetInteractable = newInteractable;
+	
+	targetInteractable->BeginFocus();
+}
+
+void AStealthPlayerCharacter::NoInteractableFound()
+{
+	if (IsInteracting())
+	{
+		GetWorldTimerManager().ClearTimer(timerHandle_Interaction);
+	}
+
+	if (interactionData.currentInteractable)
+	{
+		if(IsValid(targetInteractable.GetObject()))
+		{
+			targetInteractable->EndFocus();
+		}
+	}
+
+	//Hide interaction widget on the HUD
+
+	interactionData.currentInteractable = nullptr;
+	targetInteractable = nullptr;
+}
+
+void AStealthPlayerCharacter::BeginInteract()
+{
+
+	// Verify nothiong has changed with the interactable state since the begining interaction
+	PerformInteractionCheck();
+
+	if (interactionData.currentInteractable)
+	{
+		if (IsValid(targetInteractable.GetObject()))
+		{
+			targetInteractable->BeginInteract();
+			if (FMath::IsNearlyZero(targetInteractable->interactableData.interactionDuration, 0.1f))
+			{
+				Interact();
+			}
+			else
+			{
+				GetWorldTimerManager().SetTimer(timerHandle_Interaction,
+					this,
+					&AStealthPlayerCharacter::Interact,
+					targetInteractable->interactableData.interactionDuration,
+					false);
+			}
+		}
+	}
+
+}
+
+void AStealthPlayerCharacter::EndInteract()
+{
+	GetWorldTimerManager().ClearTimer(timerHandle_Interaction);
+
+	if (IsValid(targetInteractable.GetObject()))
+	{
+		targetInteractable->EndInteract();
+	}
+}
+
+void AStealthPlayerCharacter::Interact()
+{
+	GetWorldTimerManager().ClearTimer(timerHandle_Interaction);
+
+	if (IsValid(targetInteractable.GetObject()))
+	{
+		targetInteractable->Interact();
+	}
 }
 
 float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
@@ -156,13 +273,10 @@ void AStealthPlayerCharacter::FireGun()
 
 	if (isHit)
 	{
-		FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr);
-		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);
+		FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
+		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
 
-
-
-		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Red, true);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Somthing"));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
 			
 	}
 	
@@ -207,36 +321,14 @@ void AStealthPlayerCharacter::StopCrouch()
 	//}
 }
 
-void AStealthPlayerCharacter::InteractWithObject()
-{
-
-}
-
-void AStealthPlayerCharacter::ShowInteractWidget()
-{
-	if (WidgetClass)
-	{
-		interactableUI = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
-		if (interactableUI)
-		{
-			interactableUI->AddToViewport();
-		}
-	}
-}
-
 void AStealthPlayerCharacter::SetupStimuliSource()
 {
-	StimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
-	if (StimulusSource)
+	stimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
+	if (stimulusSource)
 	{
-		StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
-		StimulusSource->RegisterWithPerceptionSystem();
+		stimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
+		stimulusSource->RegisterWithPerceptionSystem();
 	}
-}
-
-void AStealthPlayerCharacter::ExitGame()
-{
-
 }
 
 

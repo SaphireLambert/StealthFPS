@@ -5,36 +5,76 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Components/SphereComponent.h"
-#include "LevelObjective.h"
 #include "Templates/SubclassOf.h"
+#include "Interfaces/InteractInterface.h"
 #include "StealthPlayerCharacter.generated.h"
 
+USTRUCT()
+struct FInteractionData
+{
+	GENERATED_USTRUCT_BODY()
+
+	FInteractionData() : currentInteractable(nullptr), lastInteractionCheckTime(0.0f)
+	{
+
+	};
+
+	UPROPERTY()
+	AActor* currentInteractable;
+
+	UPROPERTY()
+	float lastInteractionCheckTime;
+};
 
 UCLASS()
 class STEALTHFPS_API AStealthPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this character's properties
-	AStealthPlayerCharacter();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
+public:	
+	//==================================================================
+	// PROPERIES AND VARIABLES
+	//==================================================================
 	
 
-public:	
+	//Store the players current health
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttributes")
+	float playerCurrentHealth; 
+
+	//Store the players maximum health
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
+	float playerMaxHealth = 100;
+
+	//Stores the player damage
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
+	float pistolDamage = 100;
+	
+	//a float that can be called to deal damage to the player from other classes 
+	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, 
+	class AController* eventInstigator, AActor* damageCauser);
+
+	//==================================================================
+	// FUNCTIONS
+	//==================================================================
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//Finn Has Edited \/
+	// Sets default values for this character's properties
+	AStealthPlayerCharacter();
 
-public: 
+	FORCEINLINE bool IsInteracting() const { return GetWorldTimerManager().IsTimerActive(timerHandle_Interaction); };
+
+
+protected:
+
+	//==================================================================
+	// PROPERIES AND VARIABLES
+	//==================================================================
+	
 	//Created the skeletal Mesh Component for the player character in the editor
 	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
 		class USkeletalMeshComponent* bodyMesh;
@@ -51,6 +91,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
 		class UCameraComponent* firstPersonCamera;
 
+	//Stores the position of the gunmesh
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+		FVector gunOffset;
 
 	//The turn rate for the camera look variable Horizontal
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
@@ -60,33 +103,33 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
 		float turnHorizontalRate;
 
-	
-	//Stores the position of the gunmesh
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
-		FVector gunOffset;
+	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
+	TScriptInterface<IInteractInterface> targetInteractable;
 
-	//Store the players current health
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttributes")
-	float playerCurrentHealth; 
+	// Ads the AI Stimulai Souce so any AI Character can see the player
+	class UAIPerceptionStimuliSourceComponent* stimulusSource;
 
-	//Store the players maximum health
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
-	float playerMaxHealth = 100;
+	float interactioCheckFrequency;
 
-	//Stores the player damage
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
-	float pistolDamage = 100;
+	float interactionCheckDistance;
 
-	//Reference to the UI prompt Widget
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<class UUserWidget> WidgetClass;
-	UUserWidget* interactableUI;
+	FTimerHandle timerHandle_Interaction;
 
-	
-	//a float that can be called to deal damage to the player from other classes 
-	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
+	FInteractionData interactionData;
 
-protected:
+	//==================================================================
+	// FUNCTIONS
+	//==================================================================
+
+	void PerformInteractionCheck();
+	void FoundInteractable(AActor* newInteractable);
+	void NoInteractableFound();
+	void BeginInteract();
+	void EndInteract();
+	void Interact();
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	void FireGun();
 
@@ -97,16 +140,7 @@ protected:
 	void HorizontalTurnAtRate(float rate);
 
 	void StartCrouch();
-	void StopCrouch();
+	void StopCrouch(); 
 
-	void InteractWithObject();
-	void ShowInteractWidget();
-
-private:
-	class UAIPerceptionStimuliSourceComponent* StimulusSource;
 	void SetupStimuliSource();
-
-
-
-	void ExitGame();
 };

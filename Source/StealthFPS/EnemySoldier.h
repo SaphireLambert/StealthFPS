@@ -14,34 +14,16 @@ class STEALTHFPS_API AEnemySoldier : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	AEnemySoldier();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float deltaTime) override;
-
-
-//Finn Edit From Here\/
-
+	//==================================================================
+	// PROPERIES AND VARIABLES
+	//==================================================================
 
 	UBehaviorTree* GetBehaviorTree() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* killBox;
 
-	UFUNCTION()
-	void CauseDamageToPlayer(UPrimitiveComponent* interactComp, AActor* otherActor,
-		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
-		bool bFromSweep, const FHitResult& interact);
-
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
-
-	void EnemyDied();
 
 	UPROPERTY(EditAnywhere)
 	class AEnemyAI_Controller* EnemyControllerClass;
@@ -49,11 +31,30 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Health = 100;
 
+	//==================================================================
+	// FUNCTIONS
+	//==================================================================
+	 
+	// Sets default values for this character's properties
+	AEnemySoldier();
+
+	// Called every frame
+	virtual void Tick(float deltaTime) override;
+
+	UFUNCTION()
+	void CauseDamageToPlayer(UPrimitiveComponent* interactComp, AActor* otherActor,
+		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
+		bool bFromSweep, const FHitResult& interact);
+
+	void EnemyDied();
+
 protected:
 
 	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* Tree;
 
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 
 };
