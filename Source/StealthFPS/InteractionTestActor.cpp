@@ -52,7 +52,7 @@ void AInteractionTestActor::EndInteract()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("Ending Interation"));
 }
 
-void AInteractionTestActor::Interact()
+void AInteractionTestActor::Interact(AStealthPlayerCharacter* playerCharacter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Interacting"));
 }

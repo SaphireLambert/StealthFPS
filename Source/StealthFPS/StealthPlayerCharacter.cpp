@@ -65,7 +65,7 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	gunOffset = FVector(100, 0, 10);
 
 	interactioCheckFrequency = 0.1f;
-	interactionCheckDistance = 225;
+	interactionCheckDistance = 500;
 
 	SetupStimuliSource();
 }
@@ -128,15 +128,13 @@ void AStealthPlayerCharacter::PerformInteractionCheck()
 		queryParams.AddIgnoredActor(this);
 		FHitResult traceHit;
 
-		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, false, 1.0, 0, 2.0f);
-
 		if (GetWorld()->LineTraceSingleByChannel(traceHit, startTrace, endTrace, ECC_Visibility, queryParams))
 		{
 			if (traceHit.GetActor()->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 			{
-				const float distance = (startTrace - traceHit.ImpactPoint).Size();
+				
 
-				if (traceHit.GetActor() != interactionData.currentInteractable && distance <= interactionCheckDistance)
+				if (traceHit.GetActor() != interactionData.currentInteractable)
 				{
 					FoundInteractable(traceHit.GetActor());
 					return;
@@ -235,7 +233,7 @@ void AStealthPlayerCharacter::Interact()
 
 	if (IsValid(targetInteractable.GetObject()))
 	{
-		targetInteractable->Interact();
+		targetInteractable->Interact(this);
 	}
 }
 

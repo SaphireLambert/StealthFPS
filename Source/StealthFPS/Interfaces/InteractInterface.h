@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "InteractInterface.generated.h"
+
+class AStealthPlayerCharacter;
+
 UENUM()
 enum class EInteractableType : uint8
 {
@@ -72,7 +75,7 @@ public:
 	virtual void BeginInteract(); // Gives the interaction a timer so its not instant 
 	virtual void EndInteract();
 
-	virtual void Interact(); // Allows the player to interact with the object
+	virtual void Interact(AStealthPlayerCharacter* playerCharacter); // Allows the player to interact with the object
 
 	FInteractableData interactableData;
 

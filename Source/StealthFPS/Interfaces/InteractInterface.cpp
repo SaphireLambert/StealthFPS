@@ -21,6 +21,6 @@ void IInteractInterface::EndInteract()
 {
 }
 
-void IInteractInterface::Interact()
+void IInteractInterface::Interact(AStealthPlayerCharacter* playerCharacter)
 {
 }
