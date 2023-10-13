@@ -8,7 +8,7 @@ APlayerCharacterHUD::APlayerCharacterHUD()
 {
 }
 
-void APlayerCharacterHUD::BeginPlay()
+void APlayerCharacterHUD::BeginPlay() const
 {
 	Super::BeginPlay();
 	
@@ -27,7 +27,7 @@ void APlayerCharacterHUD::BeginPlay()
 	}
 }
 
-void APlayerCharacterHUD::DisplayMenu()
+void APlayerCharacterHUD::DisplayMenu() const
 {
 	if (mainMenuWidget)
 	{
@@ -36,7 +36,7 @@ void APlayerCharacterHUD::DisplayMenu()
 	}
 }
 
-void APlayerCharacterHUD::HideMenu()
+void APlayerCharacterHUD::HideMenu() const
 {
 	if (mainMenuWidget)
 	{
@@ -45,7 +45,7 @@ void APlayerCharacterHUD::HideMenu()
 	}
 }
 
-void APlayerCharacterHUD::ShowInteractionWidget()
+void APlayerCharacterHUD::ShowInteractionWidget() const
 {
 	if (interactionWidget)
 	{
@@ -53,7 +53,7 @@ void APlayerCharacterHUD::ShowInteractionWidget()
 	}
 }
 
-void APlayerCharacterHUD::HideInteractionWidget()
+void APlayerCharacterHUD::HideInteractionWidget() const
 {
 	if (interactionWidget)
 	{
@@ -61,7 +61,7 @@ void APlayerCharacterHUD::HideInteractionWidget()
 	}
 }
 
-void APlayerCharacterHUD::UpdateInteractionWidget(const FInteractableData* InteractableData)
+void APlayerCharacterHUD::UpdateInteractionWidget(const FInteractableData* InteractableData) const
 {
 	if (interactionWidget)
 	{
@@ -70,7 +70,7 @@ void APlayerCharacterHUD::UpdateInteractionWidget(const FInteractableData* Inter
 			interactionWidget->SetVisibility(ESlateVisibility::Visible);
 		}
 
-		//interactionWidget->UpdateWidget(InteractableData);
+		interactionWidget->UpdateWidget(InteractableData);
 	}
 }
 
