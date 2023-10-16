@@ -7,7 +7,6 @@
 #include "Components/SphereComponent.h"
 #include "Templates/SubclassOf.h"
 #include "Interfaces/InteractInterface.h"
-#include "UserInterfaces_UI/PlayerCharacterHUD.h"
 #include "StealthPlayerCharacter.generated.h"
 
 USTRUCT()
@@ -76,9 +75,6 @@ protected:
 	// PROPERIES AND VARIABLES
 	//==================================================================
 	
-	UPROPERTY()
-	APlayerCharacterHUD* playerHUD;
-
 	//Created the skeletal Mesh Component for the player character in the editor
 	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
 		class USkeletalMeshComponent* bodyMesh;

@@ -17,8 +17,6 @@ AInteractionTestActor::AInteractionTestActor()
 void AInteractionTestActor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	interactableData = instanceInteractableData;
 }
 // Called every frame
 void AInteractionTestActor::Tick(float DeltaTime)

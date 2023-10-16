@@ -99,7 +99,6 @@ void AStealthPlayerCharacter::BeginPlay()
 
 	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
 
-	playerHUD = Cast<APlayerCharacterHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 }
 
 // Called every frame
@@ -165,8 +164,6 @@ void AStealthPlayerCharacter::FoundInteractable(AActor* newInteractable)
 
 	interactionData.currentInteractable = newInteractable;
 	targetInteractable = newInteractable;
-
-	playerHUD->UpdateInteractionWidget(&targetInteractable->interactableData);
 	
 	targetInteractable->BeginFocus();
 }
