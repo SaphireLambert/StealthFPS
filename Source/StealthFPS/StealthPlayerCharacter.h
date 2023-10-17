@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayerCharacterHUD.h"
+#include "Templates/SubclassOf.h"
 #include "GameFramework/Character.h"
 #include "Components/SphereComponent.h"
-#include "Templates/SubclassOf.h"
 #include "Interfaces/InteractInterface.h"
 #include "StealthPlayerCharacter.generated.h"
 
@@ -74,6 +75,9 @@ protected:
 	//==================================================================
 	// PROPERIES AND VARIABLES
 	//==================================================================
+
+	UPROPERTY()
+	APlayerCharacterHUD* HUD;
 	
 	//Created the skeletal Mesh Component for the player character in the editor
 	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
