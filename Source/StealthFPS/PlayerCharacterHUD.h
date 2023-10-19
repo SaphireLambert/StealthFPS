@@ -7,6 +7,7 @@
 
 struct FInteractableData;
 class UInteractionWidget;
+//class UPlayerHealth;
 
 UCLASS()
 class STEALTHFPS_API APlayerCharacterHUD : public AHUD
@@ -20,6 +21,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 	TSubclassOf<UInteractionWidget> interactionWidgetClass;
+
+	/*UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UPlayerHealth> playerHealthClass;*/
 
 
 	//==================================================================
@@ -40,6 +44,9 @@ protected:
 	//==================================================================
 	UPROPERTY()
 	UInteractionWidget* interactionWidget;
+
+	/*UPROPERTY()
+	UPlayerHealth* playerHealthWidget;*/
 
 	//==================================================================
 	// FUNCTIONS

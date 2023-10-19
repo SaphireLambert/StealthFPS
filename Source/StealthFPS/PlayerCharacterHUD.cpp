@@ -18,6 +18,11 @@ void APlayerCharacterHUD::BeginPlay()
 		interactionWidget->AddToViewport(1);
 		interactionWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
+
+	/*if (playerHealthClass)
+	{
+		playerHealthWidget = CreateWidget<UPlayerHealth>(GetWorld(), playerHealthClass);
+	}*/
 }
 
 
