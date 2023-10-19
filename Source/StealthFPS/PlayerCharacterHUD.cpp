@@ -1,5 +1,6 @@
 #include "PlayerCharacterHUD.h"
 #include "InteractionWidget.h"
+#include "PlayerHealthBar.h"
 
 // Fill out your copyright notice in the Description page of Project Settings.
 
@@ -19,10 +20,11 @@ void APlayerCharacterHUD::BeginPlay()
 		interactionWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
-	/*if (playerHealthClass)
+	if (playerHealthClass)
 	{
-		playerHealthWidget = CreateWidget<UPlayerHealth>(GetWorld(), playerHealthClass);
-	}*/
+		playerHealthWidget = CreateWidget<UPlayerHealthBar>(GetWorld(), playerHealthClass);
+		playerHealthWidget->AddToViewport(5);
+	}
 }
 
 
