@@ -4,6 +4,7 @@
 
 #include "StealthPlayerCharacter.h"
 #include "EnemySoldier.h"
+#include "PlayerHealthBar.h"
 
 // ENGINE
 #include "Camera/CameraComponent.h"
@@ -15,6 +16,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/ProgressBar.h"
 
 
 // Sets default values before instanciation 
@@ -100,6 +102,8 @@ void AStealthPlayerCharacter::BeginPlay()
 	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
 
 	HUD = Cast<APlayerCharacterHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+
+	
 }
 
 // Called every frame
@@ -111,6 +115,9 @@ void AStealthPlayerCharacter::Tick(float DeltaTime)
 	{
 		PerformInteractionCheck();
 	}
+	
+
+	
 }
 
 void AStealthPlayerCharacter::PerformInteractionCheck()

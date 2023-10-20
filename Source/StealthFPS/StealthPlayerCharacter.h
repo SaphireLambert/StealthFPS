@@ -110,6 +110,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
 	TScriptInterface<IInteractInterface> targetInteractable;
 
+	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
+	UPlayerHealthBar* playerHealthBar;
+
 	// Ads the AI Stimulai Souce so any AI Character can see the player
 	class UAIPerceptionStimuliSourceComponent* stimulusSource;
 
