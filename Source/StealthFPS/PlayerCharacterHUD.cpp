@@ -24,6 +24,7 @@ void APlayerCharacterHUD::BeginPlay()
 	{
 		playerHealthWidget = CreateWidget<UPlayerHealthBar>(GetWorld(), playerHealthClass);
 		playerHealthWidget->AddToViewport(5);
+		playerHealthWidget->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 

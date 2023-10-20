@@ -16,6 +16,9 @@ class STEALTHFPS_API UPlayerHealthBar : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+
+	//UPlayerHealthBar();
+
 	UPROPERTY()
 	float currentHealth;
 
