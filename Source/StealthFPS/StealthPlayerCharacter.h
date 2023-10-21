@@ -49,6 +49,10 @@ public:
 	//Stores the player damage
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
 	float pistolDamage = 100;
+
+	//Bool to see if character is aiming the gun (ADS)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	bool isAimedIn;
 	
 	//a float that can be called to deal damage to the player from other classes 
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, 
@@ -67,6 +71,7 @@ public:
 	// Sets default values for this character's properties
 	AStealthPlayerCharacter();
 
+	//A bool for to see if the character is interacting with an object
 	FORCEINLINE bool IsInteracting() const { return GetWorldTimerManager().IsTimerActive(timerHandle_Interaction); };
 
 
@@ -128,6 +133,7 @@ protected:
 	// FUNCTIONS
 	//==================================================================
 
+	//Functions for my interactions
 	void PerformInteractionCheck();
 	void FoundInteractable(AActor* newInteractable);
 	void NoInteractableFound();
@@ -138,16 +144,21 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//Shoots the pistol
 	void FireGun();
 
+	//Moves the character
 	void MoveForward(float axisValue);
 	void MoveRight(float axisValue);
 
+	//Turns the character
 	void VerticalTurnAtRate(float rate);
 	void HorizontalTurnAtRate(float rate);
 
-	void StartCrouch();
-	void StopCrouch(); 
-
+	//Sets up the stimuli for the AI
 	void SetupStimuliSource();
+
+	//Zooms the camera for the ADS function
+	void StartZoom();
+	void StopZoom();
 };

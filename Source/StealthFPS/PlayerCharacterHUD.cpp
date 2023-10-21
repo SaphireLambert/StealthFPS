@@ -1,6 +1,7 @@
 #include "PlayerCharacterHUD.h"
 #include "InteractionWidget.h"
 #include "PlayerHealthBar.h"
+#include "CrossHair.h"
 
 // Fill out your copyright notice in the Description page of Project Settings.
 
@@ -25,6 +26,14 @@ void APlayerCharacterHUD::BeginPlay()
 		playerHealthWidget = CreateWidget<UPlayerHealthBar>(GetWorld(), playerHealthClass);
 		playerHealthWidget->AddToViewport(5);
 		playerHealthWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	if (crossHairClass)
+	{
+		crossHairWidget = CreateWidget<UCrossHair>(GetWorld(), crossHairClass);
+		crossHairWidget->AddToViewport(4);
+		crossHairWidget->SetVisibility(ESlateVisibility::Visible);
+
 	}
 }
 

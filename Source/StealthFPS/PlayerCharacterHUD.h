@@ -8,6 +8,7 @@
 struct FInteractableData;
 class UInteractionWidget;
 class UPlayerHealthBar;
+class UCrossHair;
 
 UCLASS()
 class STEALTHFPS_API APlayerCharacterHUD : public AHUD
@@ -25,6 +26,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 	TSubclassOf<UPlayerHealthBar> playerHealthClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UCrossHair> crossHairClass;
 
 	//==================================================================
 	// FUNCTIONS
@@ -47,6 +50,9 @@ protected:
 
 	UPROPERTY()
 	UPlayerHealthBar* playerHealthWidget;
+
+	UPROPERTY()
+	UCrossHair* crossHairWidget;
 
 	//==================================================================
 	// FUNCTIONS

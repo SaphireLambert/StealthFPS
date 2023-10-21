@@ -70,6 +70,8 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	interactionCheckDistance = 500;
 
 	SetupStimuliSource();
+
+	isAimedIn = false;
 }
 
 
@@ -88,7 +90,8 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 	PlayerInputComponent->BindAction(TEXT("Shoot"), IE_Pressed, this, &AStealthPlayerCharacter::FireGun);
 
-	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &AStealthPlayerCharacter::StartCrouch);
+	PlayerInputComponent->BindAction(TEXT("AimTheGun"), IE_Pressed, this, &AStealthPlayerCharacter::StartZoom);
+	PlayerInputComponent->BindAction(TEXT("AimTheGun"), IE_Released, this, &AStealthPlayerCharacter::StopZoom);
 
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::BeginInteract);
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Released, this, &AStealthPlayerCharacter::EndInteract);
@@ -311,24 +314,6 @@ void AStealthPlayerCharacter::HorizontalTurnAtRate(float rate)
 	AddControllerPitchInput(rate * turnHorizontalRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AStealthPlayerCharacter::StartCrouch() 
-{
-	if (!bIsCrouched)
-	{
-		Crouch();
-		bIsCrouched = true;
-	}
-
-}
-void AStealthPlayerCharacter::StopCrouch()
-{
-	//if (bIsCrouched)
-	//{
-	//	UnCrouch()
-	//	bIsCrouched = false;
-	//}
-}
-
 void AStealthPlayerCharacter::SetupStimuliSource()
 {
 	stimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
@@ -337,6 +322,18 @@ void AStealthPlayerCharacter::SetupStimuliSource()
 		stimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
 		stimulusSource->RegisterWithPerceptionSystem();
 	}
+}
+
+void AStealthPlayerCharacter::StartZoom()
+{	
+	firstPersonCamera->SetFieldOfView(70);
+	isAimedIn = true;	
+}
+
+void AStealthPlayerCharacter::StopZoom()
+{
+	firstPersonCamera->SetFieldOfView(90);
+	isAimedIn = false;
 }
 
 
