@@ -3,6 +3,7 @@
 
 #include "EnemyAI_Controller.h"
 #include "EnemySoldier.h"
+#include "HAL/Event.h"
 #include "StealthPlayerCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"

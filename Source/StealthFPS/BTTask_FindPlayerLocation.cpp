@@ -27,7 +27,7 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 			//Get the navigation system and generates a random location close to the player character
 			if (auto* const navSystem = UNavigationSystemV1::GetCurrent(GetWorld()))
 			{
-				//Trys to get a random location neae the player
+				//Trys to get a random location near the player
 				if (navSystem->GetRandomPointInNavigableRadius(playerLocation, searchRadius, loc))
 				{
 					ownerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), loc.Location);

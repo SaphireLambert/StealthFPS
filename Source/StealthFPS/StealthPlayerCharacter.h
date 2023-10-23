@@ -53,6 +53,10 @@ public:
 	//Bool to see if character is aiming the gun (ADS)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	bool isAimedIn;
+
+	//Bool to check if the player is crouched or not
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	bool isCrouched;
 	
 	//a float that can be called to deal damage to the player from other classes 
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, 
@@ -161,4 +165,8 @@ protected:
 	//Zooms the camera for the ADS function
 	void StartZoom();
 	void StopZoom();
+
+	//Allows the player to crouch in the game reducing chance to be seen. 
+	void StartCrouch();
+	void StopCrouch();
 };

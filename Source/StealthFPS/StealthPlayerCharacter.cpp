@@ -72,6 +72,8 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	SetupStimuliSource();
 
 	isAimedIn = false;
+
+	isCrouched = false;
 }
 
 
@@ -95,7 +97,11 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::BeginInteract);
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Released, this, &AStealthPlayerCharacter::EndInteract);
+
+	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &AStealthPlayerCharacter::StartCrouch);
+	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
 }
+
 
 // Called when the game starts or when spawned
 void AStealthPlayerCharacter::BeginPlay()
@@ -334,6 +340,24 @@ void AStealthPlayerCharacter::StopZoom()
 {
 	firstPersonCamera->SetFieldOfView(90);
 	isAimedIn = false;
+}
+
+void AStealthPlayerCharacter::StartCrouch()
+{
+	GetCapsuleComponent()->SetCapsuleHalfHeight(48);
+	GetCharacterMovement()->MaxWalkSpeed = 300;
+	ACharacter::Crouch();
+
+	isCrouched = true;
+}
+
+void AStealthPlayerCharacter::StopCrouch()
+{
+	GetCapsuleComponent()->SetCapsuleHalfHeight(95);
+	GetCharacterMovement()->MaxWalkSpeed = 600;
+	ACharacter::UnCrouch();
+
+	isCrouched = false;
 }
 
 
