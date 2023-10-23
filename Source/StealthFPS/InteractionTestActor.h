@@ -21,12 +21,17 @@ public:
 
 protected:
 
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UUserWidget> winConditionUI;
+
 	UPROPERTY(EditAnywhere, Category = "TestActor")
 	UStaticMeshComponent* mesh;
 
 	UPROPERTY(EditInstanceOnly, Category = "TestActor")
 	FInteractableData instanceInteractableData;
 
+	UPROPERTY()
+	UUserWidget* winCondition;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
