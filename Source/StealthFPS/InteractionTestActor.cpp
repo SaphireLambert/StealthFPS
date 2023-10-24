@@ -20,13 +20,6 @@ void AInteractionTestActor::BeginPlay()
 	Super::BeginPlay();
 
 	interactableData = instanceInteractableData;
-
-	if (winConditionUI)
-	{
-		winCondition = CreateWidget<UUserWidget>(GetWorld(), winConditionUI);
-		winCondition->AddToViewport(10);
-		winCondition->SetVisibility(ESlateVisibility::Collapsed);
-	}
 }
 // Called every frame
 void AInteractionTestActor::Tick(float DeltaTime)
@@ -65,6 +58,11 @@ void AInteractionTestActor::EndInteract()
 void AInteractionTestActor::Interact(AStealthPlayerCharacter* playerCharacter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Interacting"));
-	winCondition->SetVisibility(ESlateVisibility::Visible);
+	if (winConditionUI)
+	{
+		winCondition = CreateWidget<UUserWidget>(GetWorld(), winConditionUI);
+		winCondition->AddToViewport(10);
+		winCondition->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
