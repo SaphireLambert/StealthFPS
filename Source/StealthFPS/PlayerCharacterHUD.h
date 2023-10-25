@@ -41,6 +41,9 @@ public:
 
 	void UpdateInteractionWidget(const FInteractableData* InteractableData);
 
+	UPROPERTY()
+	UPlayerHealthBar* playerHealthWidget;
+
 protected:
 	//==================================================================	
 	// PROPERIES AND VARIABLES	
@@ -48,8 +51,6 @@ protected:
 	UPROPERTY()
 	UInteractionWidget* interactionWidget;
 
-	UPROPERTY()
-	UPlayerHealthBar* playerHealthWidget;
 
 	UPROPERTY()
 	UCrossHair* crossHairWidget;

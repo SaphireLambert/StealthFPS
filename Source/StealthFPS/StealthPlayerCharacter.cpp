@@ -111,9 +111,8 @@ void AStealthPlayerCharacter::BeginPlay()
 	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
 
 	HUD = Cast<APlayerCharacterHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-
-	
 }
+
 
 // Called every frame
 void AStealthPlayerCharacter::Tick(float DeltaTime)
@@ -263,11 +262,20 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 	damageCaused = FMath::Min(playerCurrentHealth, damageCaused);
 
 	playerCurrentHealth -= damageCaused;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Damage caused to player"));
+
+	if (HUD) {
+		// Access the playerHealthWidget from the HUD.
+		if (HUD->playerHealthWidget) 
+		{
+			HUD->playerHealthWidget->UpdateHealthPercent(playerCurrentHealth, playerMaxHealth);
+		}
+	}
 
 	if (playerCurrentHealth <= 0)
 	{
-		
-		UE_LOG(LogTemp, Warning, TEXT("Player has died"));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player Has Died"));
+		Destroy();
 	}
 	
 	return damageCaused;
@@ -298,7 +306,6 @@ void AStealthPlayerCharacter::FireGun()
 	}
 	
 }
-
 
 void AStealthPlayerCharacter::MoveForward(float axisValue)
 {

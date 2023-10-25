@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayerHealthBar.h"
 #include "PlayerCharacterHUD.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/Character.h"
@@ -62,6 +63,9 @@ public:
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, 
 	class AController* eventInstigator, AActor* damageCauser);
 
+	UPROPERTY()
+	UPlayerHealthBar* playerHealthWidget;
+
 	//==================================================================
 	// FUNCTIONS
 	//==================================================================
@@ -119,8 +123,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
 	TScriptInterface<IInteractInterface> targetInteractable;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<class UPlayerHealthBar> healthBarClass;
+
 	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
-	UPlayerHealthBar* playerHealthBar;
+	class UPlayerHealthBar* playerHealthBar;
 
 	// Ads the AI Stimulai Souce so any AI Character can see the player
 	class UAIPerceptionStimuliSourceComponent* stimulusSource;

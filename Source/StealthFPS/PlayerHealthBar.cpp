@@ -2,18 +2,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerHealthBar.h"
-#include "StealthPlayerCharacter.h"
 #include "Components/ProgressBar.h"
 
-//UPlayerHealthBar::UPlayerHealthBar()
-//{
-//    //UProgressBar* playerHealthBar = NewObject<UProgressBar>(this, UProgressBar::StaticClass());
-//}
-
-void UPlayerHealthBar::UpdateHealthPercent()
+void UPlayerHealthBar::UpdateHealthPercent(float max, float current)
 {
-    playerReference->playerMaxHealth = maxHealth;
-    playerReference->playerCurrentHealth = currentHealth;
-
-    playerHealthBar->SetPercent(currentHealth/maxHealth);  
+    playerHealthBar->SetPercent(current/max);  
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Updating health Percent bar"));
 }
