@@ -7,6 +7,7 @@
 #include "PlayerHealthBar.h"
 
 // ENGINE
+#include "Kismet/GameplayStatics.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -17,6 +18,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
+#include "Components/AudioComponent.h"
 
 
 // Sets default values before instanciation 
@@ -58,6 +60,10 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	//Setup for the gun muzzle
 	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
 
+	// Create an audio component
+	audioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComponent->bAutoActivate = false; // Do not play the sound immediately upon creation
+
 	muzzleLocation->SetupAttachment(gunMesh);
 	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
 
@@ -75,8 +81,6 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	isCrouched = false;
 }
-
-
 
 // Called to bind functionality to input
 void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -102,7 +106,6 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
 }
 
-
 // Called when the game starts or when spawned
 void AStealthPlayerCharacter::BeginPlay()
 {
@@ -112,7 +115,6 @@ void AStealthPlayerCharacter::BeginPlay()
 
 	HUD = Cast<APlayerCharacterHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 }
-
 
 // Called every frame
 void AStealthPlayerCharacter::Tick(float DeltaTime)
