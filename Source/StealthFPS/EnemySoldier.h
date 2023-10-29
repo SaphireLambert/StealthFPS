@@ -20,9 +20,6 @@ public:
 
 	UBehaviorTree* GetBehaviorTree() const;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UBoxComponent* killBox;
-
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
 
 	UPROPERTY(EditAnywhere)
@@ -42,16 +39,21 @@ public:
 	virtual void Tick(float deltaTime) override;
 
 	UFUNCTION()
-	void CauseDamageToPlayer(UPrimitiveComponent* interactComp, AActor* otherActor,
-		UPrimitiveComponent* otherComp, int32 otherBodyIndex,
-		bool bFromSweep, const FHitResult& interact);
-
+	void ShootShotGun();
 	void EnemyDied();
 
 protected:
 
 	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* Tree;
+
+	//Created the gun skeletal mesh in the editor
+	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
+	class USkeletalMeshComponent* gunMesh;
+
+	//Creates location for the muzzle location
+	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
+	class USceneComponent* muzzleLocation;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

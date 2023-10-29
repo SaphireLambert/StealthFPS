@@ -61,8 +61,8 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
 
 	// Create an audio component
-	audioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
-	audioComponent->bAutoActivate = false; // Do not play the sound immediately upon creation
+	//audioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	//audioComponent->bAutoActivate = false; // Do not play the sound immediately upon creation
 
 	muzzleLocation->SetupAttachment(gunMesh);
 	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
@@ -270,7 +270,7 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 		// Access the playerHealthWidget from the HUD.
 		if (HUD->playerHealthWidget) 
 		{
-			HUD->playerHealthWidget->UpdateHealthPercent(playerCurrentHealth, playerMaxHealth);
+			HUD->playerHealthWidget->UpdateHealthPercent(playerMaxHealth, playerCurrentHealth);
 		}
 	}
 
@@ -287,7 +287,7 @@ void AStealthPlayerCharacter::FireGun()
 {
 	FHitResult hit;
 
-	const float weaponRange = 2000;
+	const float weaponRange = 2500;
 	const FVector startTrace = muzzleLocation->GetComponentLocation();
 	const FVector forwardVector = firstPersonCamera->GetForwardVector();
 	const FVector endTrace = (forwardVector * weaponRange) + startTrace;

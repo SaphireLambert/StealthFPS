@@ -20,17 +20,21 @@ AEnemySoldier::AEnemySoldier()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//Finn Edited \/
-	killBox = CreateDefaultSubobject<UBoxComponent>(TEXT("killBox"));
-	killBox->SetupAttachment(RootComponent);
-	killBox->SetRelativeLocation(FVector(50, 0, 0));
+	//Setup for the gun mesh
+	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
+
+	gunMesh->SetOnlyOwnerSee(true);
+	gunMesh->bCastDynamicShadow = false;
+	gunMesh->CastShadow = false;
+
+	//Setup for the gun muzzle
+	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
 }
 
 // Called when the game starts or when spawned
 void AEnemySoldier::BeginPlay()
 {
 	Super::BeginPlay();
-	killBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemySoldier::CauseDamageToPlayer);
 }
 
 // Called every frame
@@ -44,13 +48,6 @@ UBehaviorTree* AEnemySoldier::GetBehaviorTree() const
 	return Tree;
 }
 
-void AEnemySoldier::CauseDamageToPlayer(UPrimitiveComponent* interactComp, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& interact)
-{
-	if (auto playerCharacter = Cast<AStealthPlayerCharacter>(otherActor))
-	{
-		playerCharacter->TakeDamage(20, FDamageEvent(), GetInstigatorController(), this);
-	}
-}
 
 float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
 {
@@ -72,15 +69,38 @@ float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEv
 	return damageAmount;
 }
 
+void AEnemySoldier::ShootShotGun()
+{
+	FHitResult hit;
+
+	const float weaponRange = 2500;
+	const FVector startTrace = muzzleLocation->GetComponentLocation();
+	const FVector forwardVector = muzzleLocation->GetForwardVector();
+	const FVector endTrace = (forwardVector * weaponRange) + startTrace;
+
+	FCollisionQueryParams queryparameters;
+	queryparameters.AddIgnoredActor(this);
+
+	bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_Camera, queryparameters);
+
+
+	if (isHit)
+	{
+		FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
+		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
+
+	}
+}
+
 void AEnemySoldier::EnemyDied()
 {
-	GetMesh()->SetSimulatePhysics(true);//Creates the ragdol effect
+	GetMesh()->SetSimulatePhysics(true);//Creates the ragdoll effect
 
 	DetachFromControllerPendingDestroy();//Detaches the enemy AI controller to that its no longer active afer the enemy is dead. 
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Attempt at deactivating collision with the capsule for the enemy!!
-
-	killBox->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disables the kill box component so the player doesnt pass through and take damage after the enemy is dead
 }
 
 
