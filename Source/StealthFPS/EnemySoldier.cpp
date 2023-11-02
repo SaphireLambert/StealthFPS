@@ -20,9 +20,14 @@ AEnemySoldier::AEnemySoldier()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Setup for the body mesh
+	/*bodyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Enemy Character Mesh"));
+	bodyMesh->SetupAttachment(GetCapsuleComponent());
+	bodyMesh->AddRelativeRotation(FRotator(0, 0, -90));
+	bodyMesh->AddRelativeLocation(FVector(0, 0, -90));*/
+
 	//Setup for the gun mesh
 	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
-
 	gunMesh->SetOnlyOwnerSee(true);
 	gunMesh->bCastDynamicShadow = false;
 	gunMesh->CastShadow = false;
@@ -35,6 +40,8 @@ AEnemySoldier::AEnemySoldier()
 void AEnemySoldier::BeginPlay()
 {
 	Super::BeginPlay();
+
+	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("ShotGunSocket"));
 }
 
 // Called every frame
@@ -86,10 +93,11 @@ void AEnemySoldier::ShootShotGun()
 
 	if (isHit)
 	{
-		FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
-		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
+		FPointDamageEvent damageEvent(33, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
+		hit.GetActor()->TakeDamage(33, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
+		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, true, -1, 0, 1);
 
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Player"));
 
 	}
 }
@@ -100,7 +108,7 @@ void AEnemySoldier::EnemyDied()
 
 	DetachFromControllerPendingDestroy();//Detaches the enemy AI controller to that its no longer active afer the enemy is dead. 
 
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Attempt at deactivating collision with the capsule for the enemy!!
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Deactivates the collision for the enemy so players dont randomly get stick on invisible capsule
 }
 
 

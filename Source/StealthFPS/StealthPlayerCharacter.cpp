@@ -302,6 +302,7 @@ void AStealthPlayerCharacter::FireGun()
 	{
 		FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
 		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
+		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, false, -1, 0, 1);
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
 			

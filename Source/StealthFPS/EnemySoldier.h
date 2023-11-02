@@ -47,6 +47,10 @@ protected:
 	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* Tree;
 
+	//Created the skeletal Mesh Component for the player character in the editor
+	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
+	class USkeletalMeshComponent* bodyMesh;
+
 	//Created the gun skeletal mesh in the editor
 	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
 	class USkeletalMeshComponent* gunMesh;
