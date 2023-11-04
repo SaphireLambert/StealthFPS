@@ -21,10 +21,10 @@ AEnemySoldier::AEnemySoldier()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Setup for the body mesh
-	/*bodyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Enemy Character Mesh"));
+	bodyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Enemy Character Mesh"));
 	bodyMesh->SetupAttachment(GetCapsuleComponent());
 	bodyMesh->AddRelativeRotation(FRotator(0, 0, -90));
-	bodyMesh->AddRelativeLocation(FVector(0, 0, -90));*/
+	bodyMesh->AddRelativeLocation(FVector(0, 0, 0));
 
 	//Setup for the gun mesh
 	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
@@ -34,6 +34,8 @@ AEnemySoldier::AEnemySoldier()
 
 	//Setup for the gun muzzle
 	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
+	muzzleLocation->SetupAttachment(gunMesh);
+	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
 }
 
 // Called when the game starts or when spawned
@@ -80,7 +82,7 @@ void AEnemySoldier::ShootShotGun()
 {
 	FHitResult hit;
 
-	const float weaponRange = 2500;
+	const float weaponRange = 750;
 	const FVector startTrace = muzzleLocation->GetComponentLocation();
 	const FVector forwardVector = muzzleLocation->GetForwardVector();
 	const FVector endTrace = (forwardVector * weaponRange) + startTrace;
@@ -88,14 +90,14 @@ void AEnemySoldier::ShootShotGun()
 	FCollisionQueryParams queryparameters;
 	queryparameters.AddIgnoredActor(this);
 
-	bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_Camera, queryparameters);
+	bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_GameTraceChannel1, queryparameters);
 
 
 	if (isHit)
 	{
 		FPointDamageEvent damageEvent(33, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
 		hit.GetActor()->TakeDamage(33, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
-		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, true, -1, 0, 1);
+		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Red, true, -1, 0, 1);
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Player"));
 

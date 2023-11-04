@@ -59,13 +59,13 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	//Setup for the gun muzzle
 	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
+	muzzleLocation->SetupAttachment(gunMesh);
+	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
 
 	// Create an audio component
 	//audioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	//audioComponent->bAutoActivate = false; // Do not play the sound immediately upon creation
 
-	muzzleLocation->SetupAttachment(gunMesh);
-	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
 
 	//Setup for the player health
 	playerCurrentHealth = playerMaxHealth;
@@ -304,7 +304,8 @@ void AStealthPlayerCharacter::FireGun()
 		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
 		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, false, -1, 0, 1);
 
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
+		
+		UE_LOG(LogTemp, Warning, TEXT("I have hit: "), hit.GetActor());
 			
 	}
 	

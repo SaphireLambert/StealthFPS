@@ -22,7 +22,6 @@ EBTNodeResult::Type UMyBTTask_ShootAtPlayer::ExecuteTask(UBehaviorTreeComponent&
 			if (enemySoldier)
 			{
 				enemySoldier->ShootShotGun();
-
 			}
 	}
 	return EBTNodeResult::Type();

@@ -18,7 +18,7 @@ public:
 	explicit UMyBTTask_ShootAtPlayer(FObjectInitializer const& objectInitializer);
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Classes")
 	TSubclassOf<class AEnemySoldier> EnemySoldierClass;
 
 	UPROPERTY()

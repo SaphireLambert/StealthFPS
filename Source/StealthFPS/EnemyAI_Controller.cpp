@@ -9,6 +9,8 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackBoardComponent.h"
+
+
 AEnemyAI_Controller::AEnemyAI_Controller(FObjectInitializer const& onjectInitializer)
 {
 	SetupPerceptionSystem();
@@ -41,7 +43,7 @@ void AEnemyAI_Controller::SetupPerceptionSystem()
 		sightConfig->SightRadius = 2000;
 		sightConfig->LoseSightRadius = sightConfig->SightRadius + 250;
 		sightConfig->PeripheralVisionAngleDegrees = 75;
-		sightConfig->SetMaxAge(5);
+		sightConfig->SetMaxAge(2);
 		sightConfig->AutoSuccessRangeFromLastSeenLocation = 520;
 		sightConfig->DetectionByAffiliation.bDetectEnemies = true;
 		sightConfig->DetectionByAffiliation.bDetectFriendlies = true;
