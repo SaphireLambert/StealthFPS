@@ -6,6 +6,6 @@
 
 void UPlayerHealthBar::UpdateHealthPercent(float max, float current)
 {
-    playerHealthBar->SetPercent((current/max) * 100);  
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Updating health Percent bar"));
+    playerHealthBar->SetPercent((current/max));  
+    //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Updating health Percent bar"));
 }

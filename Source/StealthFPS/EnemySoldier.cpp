@@ -28,9 +28,9 @@ AEnemySoldier::AEnemySoldier()
 
 	//Setup for the gun mesh
 	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
-	gunMesh->SetOnlyOwnerSee(true);
-	gunMesh->bCastDynamicShadow = false;
-	gunMesh->CastShadow = false;
+	gunMesh->SetOnlyOwnerSee(false);
+	gunMesh->bCastDynamicShadow = true;
+	gunMesh->CastShadow = true;
 
 	//Setup for the gun muzzle
 	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
@@ -106,7 +106,7 @@ void AEnemySoldier::ShootShotGun()
 
 void AEnemySoldier::EnemyDied()
 {
-	GetMesh()->SetSimulatePhysics(true);//Creates the ragdoll effect
+	bodyMesh->SetSimulatePhysics(true);//Creates the ragdoll effect
 
 	DetachFromControllerPendingDestroy();//Detaches the enemy AI controller to that its no longer active afer the enemy is dead. 
 

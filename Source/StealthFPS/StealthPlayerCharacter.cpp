@@ -125,9 +125,14 @@ void AStealthPlayerCharacter::Tick(float DeltaTime)
 	{
 		PerformInteractionCheck();
 	}
-	
 
-	
+	if (HUD) {
+		// Access the playerHealthWidget from the HUD.
+		if (HUD->playerHealthWidget)
+		{
+			HUD->playerHealthWidget->UpdateHealthPercent(playerMaxHealth, playerCurrentHealth);
+		}
+	}
 }
 
 void AStealthPlayerCharacter::PerformInteractionCheck()
@@ -266,14 +271,6 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 	playerCurrentHealth -= damageCaused;
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Damage caused to player"));
 
-	if (HUD) {
-		// Access the playerHealthWidget from the HUD.
-		if (HUD->playerHealthWidget) 
-		{
-			HUD->playerHealthWidget->UpdateHealthPercent(playerMaxHealth, playerCurrentHealth);
-		}
-	}
-
 	if (playerCurrentHealth <= 0)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player Has Died"));
@@ -304,7 +301,7 @@ void AStealthPlayerCharacter::FireGun()
 		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
 		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, false, -1, 0, 1);
 
-		
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
 		UE_LOG(LogTemp, Warning, TEXT("I have hit: "), hit.GetActor());
 			
 	}
