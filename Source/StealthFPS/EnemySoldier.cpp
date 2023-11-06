@@ -57,6 +57,11 @@ UBehaviorTree* AEnemySoldier::GetBehaviorTree() const
 	return Tree;
 }
 
+AEnemyPatrolPath* AEnemySoldier::GetPatrolPath() const
+{
+	return patrolPath;
+}
+
 
 float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
 {

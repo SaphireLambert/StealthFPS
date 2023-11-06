@@ -7,7 +7,8 @@
 #include "NavigationSystem.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 
-UBTTask_ChasePlayer::UBTTask_ChasePlayer(FObjectInitializer const& objectInitializer)
+UBTTask_ChasePlayer::UBTTask_ChasePlayer(FObjectInitializer const& objectInitializer) :
+	UBTTask_BlackboardBase{objectInitializer}
 {
 	NodeName = TEXT("Chase Player");
 }

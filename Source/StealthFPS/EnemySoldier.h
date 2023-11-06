@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "EnemyPatrolPath.h"
 #include "EnemySoldier.generated.h"
 
 
@@ -18,8 +19,6 @@ public:
 	// PROPERIES AND VARIABLES
 	//==================================================================
 
-	UBehaviorTree* GetBehaviorTree() const;
-
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
 
 	UPROPERTY(EditAnywhere)
@@ -31,7 +30,13 @@ public:
 	//==================================================================
 	// FUNCTIONS
 	//==================================================================
-	 
+
+
+	UBehaviorTree* GetBehaviorTree() const;
+
+	AEnemyPatrolPath* GetPatrolPath() const;
+
+
 	// Sets default values for this character's properties
 	AEnemySoldier();
 
@@ -43,6 +48,10 @@ public:
 	void EnemyDied();
 
 protected:
+
+	//==================================================================
+	// PROPERIES AND VARIABLES
+	//==================================================================
 
 	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
 	UBehaviorTree* Tree;
@@ -59,6 +68,14 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
 	class USceneComponent* muzzleLocation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	AEnemyPatrolPath* patrolPath;
+
+
+	//==================================================================
+	// FUNCTIONS
+	//==================================================================
+ 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

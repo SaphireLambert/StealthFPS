@@ -8,7 +8,8 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "EnemySoldier.h"
 
-UMyBTTask_ShootAtPlayer::UMyBTTask_ShootAtPlayer(FObjectInitializer const& objectInitializer)
+UMyBTTask_ShootAtPlayer::UMyBTTask_ShootAtPlayer(FObjectInitializer const& objectInitializer) :
+	UBTTask_BlackboardBase{objectInitializer}
 {
 	NodeName = TEXT("Shoot the Player");
 }
