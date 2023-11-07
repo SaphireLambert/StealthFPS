@@ -23,19 +23,20 @@ EBTNodeResult::Type UBTTask_FindPathPoint::ExecuteTask(UBehaviorTreeComponent& o
 			// Get the current patrol path index from the blackboard 
 			auto const index = bc->GetValueAsInt(GetSelectedBlackboardKey());
 
-			//Get the Enemy NPC
-			if (auto* npc = Cast<AEnemySoldier>(cont->GetPawn()))
-			{
-				// Get the current patrol path vector from the enemy NPC - this is local to the patrol path actor
-				auto const pathPoint = npc->GetPatrolPath()->GetPatrolPoint(index);
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("Able to cast to blackboard"));
 
-				// convert the local vector to a global point
+			// Cast to AEnemySoldier
+			if (auto* npc = Cast<AEnemySoldier>(cont->GetCharacter()))
+			{
+
+				auto const pathPoint = npc->GetPatrolPath()->GetPatrolPoint(index);
 				auto const globalPoint = npc->GetPatrolPath()->GetActorTransform().TransformPosition(pathPoint);
 				bc->SetValueAsVector(patrolPathVectorKey.SelectedKeyName, globalPoint);
 
-				//finish with successs
+				// Finish with success
 				FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);
 				return EBTNodeResult::Succeeded;
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Found the path point"));
 			}
 		}
 	}
