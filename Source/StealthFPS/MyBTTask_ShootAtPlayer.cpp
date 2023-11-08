@@ -18,12 +18,12 @@ EBTNodeResult::Type UMyBTTask_ShootAtPlayer::ExecuteTask(UBehaviorTreeComponent&
 {
 	if (auto* const cont = Cast<AEnemyAI_Controller>(ownerComp.GetAIOwner()))
 	{
-			enemySoldier = GetWorld()->SpawnActor<AEnemySoldier>(EnemySoldierClass, cont->GetPawn()->GetActorLocation(), cont->GetPawn()->GetActorRotation());
+		enemySoldier = GetWorld()->SpawnActor<AEnemySoldier>(EnemySoldierClass, cont->GetPawn()->GetActorLocation(), cont->GetPawn()->GetActorRotation());
 
-			if (enemySoldier)
-			{
-				enemySoldier->ShootShotGun();
-			}
+		if (enemySoldier)
+		{
+			enemySoldier->ShootShotGun();
+		}
 	}
 	return EBTNodeResult::Type();
 }

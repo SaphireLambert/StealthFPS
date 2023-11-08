@@ -23,12 +23,12 @@ EBTNodeResult::Type UBTTask_FindPathPoint::ExecuteTask(UBehaviorTreeComponent& o
 			// Get the current patrol path index from the blackboard 
 			auto const index = bc->GetValueAsInt(GetSelectedBlackboardKey());
 
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("Able to cast to blackboard"));
+			//Test to see if the code makes it into this if statement ___ Results show success
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("Able to cast to blackboard"));
 
 			// Cast to AEnemySoldier
-			if (auto* npc = Cast<AEnemySoldier>(cont->GetCharacter()))
+			if (auto* const npc = Cast<AEnemySoldier>(cont->GetPawn())) //Code wont cast to the enemy soldier class
 			{
-
 				auto const pathPoint = npc->GetPatrolPath()->GetPatrolPoint(index);
 				auto const globalPoint = npc->GetPatrolPath()->GetActorTransform().TransformPosition(pathPoint);
 				bc->SetValueAsVector(patrolPathVectorKey.SelectedKeyName, globalPoint);

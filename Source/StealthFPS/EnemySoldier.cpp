@@ -13,6 +13,7 @@
 #include "EnemyAI_Controller.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AEnemySoldier::AEnemySoldier()
@@ -95,7 +96,7 @@ void AEnemySoldier::ShootShotGun()
 	FCollisionQueryParams queryparameters;
 	queryparameters.AddIgnoredActor(this);
 
-	bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_GameTraceChannel1, queryparameters);
+	bool isHit = UKismetSystemLibrary::SphereTraceSingle(this, startTrace, endTrace, 50, UEngineTypes::ConvertToTraceType(ECC_Visibility), true, TArray<AActor*>(), EDrawDebugTrace::ForOneFrame, hit, true);
 
 
 	if (isHit)
