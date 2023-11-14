@@ -1,6 +1,7 @@
 #include "PlayerCharacterHUD.h"
 #include "InteractionWidget.h"
 #include "PlayerHealthBar.h"
+#include "ReloadAmmoCounter.h"
 #include "CrossHair.h"
 
 // Fill out your copyright notice in the Description page of Project Settings.
@@ -33,7 +34,13 @@ void APlayerCharacterHUD::BeginPlay()
 		crossHairWidget = CreateWidget<UCrossHair>(GetWorld(), crossHairClass);
 		crossHairWidget->AddToViewport(4);
 		crossHairWidget->SetVisibility(ESlateVisibility::Visible);
+	}
 
+	if (ammoCounterClass)
+	{
+		ammoCountWidget = CreateWidget<UReloadAmmoCounter>(GetWorld(), ammoCounterClass);
+		ammoCountWidget->AddToViewport(3);
+		ammoCountWidget->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 

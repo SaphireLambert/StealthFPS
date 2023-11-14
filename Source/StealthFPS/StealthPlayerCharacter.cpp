@@ -80,6 +80,8 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	isAimedIn = false;
 
 	isCrouched = false;
+
+	weapon = nullptr;
 }
 
 // Called to bind functionality to input
@@ -95,6 +97,7 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
 
 	PlayerInputComponent->BindAction(TEXT("Shoot"), IE_Pressed, this, &AStealthPlayerCharacter::FireGun);
+	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &AStealthPlayerCharacter::ReloadWeapon);
 
 	PlayerInputComponent->BindAction(TEXT("AimTheGun"), IE_Pressed, this, &AStealthPlayerCharacter::StartZoom);
 	PlayerInputComponent->BindAction(TEXT("AimTheGun"), IE_Released, this, &AStealthPlayerCharacter::StopZoom);
@@ -282,31 +285,71 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 
 void AStealthPlayerCharacter::FireGun()
 {
-	FHitResult hit;
-
-	const float weaponRange = 2500;
-	const FVector startTrace = muzzleLocation->GetComponentLocation();
-	const FVector forwardVector = firstPersonCamera->GetForwardVector();
-	const FVector endTrace = (forwardVector * weaponRange) + startTrace;
-
-	FCollisionQueryParams queryparameters;
-	queryparameters.AddIgnoredActor(this);
-
-	bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_Camera, queryparameters);
-
-
-	if (isHit)
+	if (weapon)
 	{
-		FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
-		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
-		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, false, -1, 0, 1);
+		if (weapon->currentClipAmmo > 0)
+		{
+			FHitResult hit;
 
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
-		UE_LOG(LogTemp, Warning, TEXT("I have hit: "), hit.GetActor());
+			const float weaponRange = 2500;
+			const FVector startTrace = muzzleLocation->GetComponentLocation();
+			const FVector forwardVector = firstPersonCamera->GetForwardVector();
+			const FVector endTrace = (forwardVector * weaponRange) + startTrace;
+
+			FCollisionQueryParams queryparameters;
+			queryparameters.AddIgnoredActor(this);
+
+			bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_Camera, queryparameters);
+
+
+			if (isHit)
+			{
+				FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
+				hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
+				DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, false, -1, 0, 1);
+
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
+				UE_LOG(LogTemp, Warning, TEXT("I have hit: "), hit.GetActor());
 			
+			}
+
+			weapon->currentClipAmmo--;
+		}
+		else if (weapon->currentAmmo > 0)
+		{
+			ReloadWeapon();
+		}
+		else 
+		{
+			//TriggerOutOfAmmoPopUp();
+		}
 	}
 	
 }
+
+void AStealthPlayerCharacter::ReloadWeapon()
+{
+	if (weapon)
+	{
+		if (weapon->currentClipAmmo != weapon->maxClipAmmo)
+		{
+			if (weapon->currentAmmo - (weapon->maxClipAmmo - weapon->currentClipAmmo) >= 0)
+			{
+				weapon->currentAmmo -= (weapon->maxClipAmmo - weapon->currentClipAmmo);
+				weapon->currentClipAmmo = weapon->maxClipAmmo;
+			}
+			else
+			{
+				weapon->currentClipAmmo += weapon->currentAmmo;
+				weapon->currentAmmo = 0;
+			}
+		}
+	}
+}
+
+//void AStealthPlayerCharacter::TriggerOutOfAmmoPopUp()
+//{
+//}
 
 void AStealthPlayerCharacter::MoveForward(float axisValue)
 {

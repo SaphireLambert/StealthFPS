@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "BaseWeapon.h"
 #include "CoreMinimal.h"
 #include "PlayerHealthBar.h"
 #include "PlayerCharacterHUD.h"
@@ -62,6 +63,9 @@ public:
 	//a float that can be called to deal damage to the player from other classes 
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, 
 	class AController* eventInstigator, AActor* damageCauser);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ABaseWeapon* weapon;
 
 	UPROPERTY()
 	UPlayerHealthBar* playerHealthWidget;
@@ -155,8 +159,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//Shoots the pistol
+	//Shoots the weapon
 	void FireGun();
+
+	//reloads the current weapon allowing player to shoot the gun again 
+	void ReloadWeapon();
+
+	//UFUNCTION(BlueprintImplementableEvent, Category = "HUD")
+	//void TriggerOutOfAmmoPopUp();
 
 	//Moves the character
 	void MoveForward(float axisValue);

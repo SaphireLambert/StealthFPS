@@ -7,6 +7,7 @@
 
 struct FInteractableData;
 class UInteractionWidget;
+class UReloadAmmoCounter;
 class UPlayerHealthBar;
 class UCrossHair;
 
@@ -29,6 +30,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 	TSubclassOf<UCrossHair> crossHairClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UReloadAmmoCounter> ammoCounterClass;
+
+	UPROPERTY()
+	UPlayerHealthBar* playerHealthWidget;
+
+	UPROPERTY()
+	UReloadAmmoCounter* ammoCountWidget;
+	UPROPERTY()
+	UInteractionWidget* interactionWidget;
+
+	UPROPERTY()
+	UCrossHair* crossHairWidget;
+
 	//==================================================================
 	// FUNCTIONS
 	//==================================================================
@@ -41,19 +56,11 @@ public:
 
 	void UpdateInteractionWidget(const FInteractableData* InteractableData);
 
-	UPROPERTY()
-	UPlayerHealthBar* playerHealthWidget;
-
+	
 protected:
 	//==================================================================	
 	// PROPERIES AND VARIABLES	
 	//==================================================================
-	UPROPERTY()
-	UInteractionWidget* interactionWidget;
-
-
-	UPROPERTY()
-	UCrossHair* crossHairWidget;
 
 	//==================================================================
 	// FUNCTIONS
