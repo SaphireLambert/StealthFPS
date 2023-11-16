@@ -81,7 +81,10 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	isCrouched = false;
 
-	weapon = nullptr;
+	MaxAmmoReserve = 10;
+	MaxAmmmoClip = 1;
+	CurrentAmmoReserve = 10;
+	CurrentAmmoClip = 1;
 }
 
 // Called to bind functionality to input
@@ -285,9 +288,8 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 
 void AStealthPlayerCharacter::FireGun()
 {
-	if (weapon)
-	{
-		if (weapon->currentClipAmmo > 0)
+
+		if (CurrentAmmoClip > 0)
 		{
 			FHitResult hit;
 
@@ -313,43 +315,34 @@ void AStealthPlayerCharacter::FireGun()
 			
 			}
 
-			weapon->currentClipAmmo--;
+			CurrentAmmoClip--;
 		}
-		else if (weapon->currentAmmo > 0)
-		{
-			ReloadWeapon();
-		}
-		else 
-		{
-			//TriggerOutOfAmmoPopUp();
-		}
-	}
 	
 }
 
 void AStealthPlayerCharacter::ReloadWeapon()
 {
-	if (weapon)
-	{
-		if (weapon->currentClipAmmo != weapon->maxClipAmmo)
+	
+	
+		if (CurrentAmmoClip != MaxAmmmoClip)
 		{
-			if (weapon->currentAmmo - (weapon->maxClipAmmo - weapon->currentClipAmmo) >= 0)
+			if (CurrentAmmoReserve - (MaxAmmmoClip - CurrentAmmoClip) >= 0)
 			{
-				weapon->currentAmmo -= (weapon->maxClipAmmo - weapon->currentClipAmmo);
-				weapon->currentClipAmmo = weapon->maxClipAmmo;
+				CurrentAmmoReserve -= (MaxAmmmoClip - CurrentAmmoClip);
+				CurrentAmmoClip = MaxAmmmoClip;
 			}
 			else
 			{
-				weapon->currentClipAmmo += weapon->currentAmmo;
-				weapon->currentAmmo = 0;
+				CurrentAmmoClip += CurrentAmmoReserve;
+				CurrentAmmoReserve = 0;
 			}
 		}
-	}
+	
 }
 
-//void AStealthPlayerCharacter::TriggerOutOfAmmoPopUp()
-//{
-//}
+void AStealthPlayerCharacter::TriggerOutOfAmmoPopUp()
+{
+}
 
 void AStealthPlayerCharacter::MoveForward(float axisValue)
 {

@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "BaseWeapon.h"
 #include "CoreMinimal.h"
 #include "PlayerHealthBar.h"
 #include "PlayerCharacterHUD.h"
@@ -64,9 +63,6 @@ public:
 	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, 
 	class AController* eventInstigator, AActor* damageCauser);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	ABaseWeapon* weapon;
-
 	UPROPERTY()
 	UPlayerHealthBar* playerHealthWidget;
 
@@ -111,6 +107,19 @@ protected:
 	//Creates first person camera component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
 		class UCameraComponent* firstPersonCamera;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	float MaxAmmoReserve;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	float MaxAmmmoClip;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	float CurrentAmmoReserve;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	float CurrentAmmoClip;
 
 	//Stores the position of the gunmesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
@@ -165,8 +174,8 @@ protected:
 	//reloads the current weapon allowing player to shoot the gun again 
 	void ReloadWeapon();
 
-	//UFUNCTION(BlueprintImplementableEvent, Category = "HUD")
-	//void TriggerOutOfAmmoPopUp();
+	UFUNCTION(Category = "HUD")
+	void TriggerOutOfAmmoPopUp();
 
 	//Moves the character
 	void MoveForward(float axisValue);
