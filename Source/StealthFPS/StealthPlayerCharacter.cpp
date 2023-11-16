@@ -34,21 +34,23 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	turnHorizontalRate = 45;
 	turnVerticalRate = 45;
 
-	//Setip for the first person camera
-	firstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("First Person Camera"));
-	firstPersonCamera->SetupAttachment(GetCapsuleComponent());
-	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
-	firstPersonCamera->bUsePawnControlRotation = true;
-
 	//Setip for the body mesh
 	bodyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Character Mesh"));
 
 	bodyMesh->SetOnlyOwnerSee(true);
-	bodyMesh->SetupAttachment(firstPersonCamera);
+	bodyMesh->SetupAttachment(GetCapsuleComponent());
 	bodyMesh->bCastDynamicShadow = false;
 	bodyMesh->CastShadow = false;
 	bodyMesh->AddRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	bodyMesh->AddRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
+
+
+	//Setip for the first person camera
+	firstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("First Person Camera"));
+	firstPersonCamera->SetupAttachment(bodyMesh);
+	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
+	firstPersonCamera->bUsePawnControlRotation = true;
+
 
 	//Setup for the gun mesh
 	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
