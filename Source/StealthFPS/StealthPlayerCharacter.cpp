@@ -75,7 +75,7 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	gunOffset = FVector(100, 0, 10);
 
 	interactioCheckFrequency = 0.1f;
-	interactionCheckDistance = 500;
+	interactionCheckDistance = 750;
 
 	SetupStimuliSource();
 
@@ -134,7 +134,8 @@ void AStealthPlayerCharacter::Tick(float DeltaTime)
 		PerformInteractionCheck();
 	}
 
-	if (HUD) {
+	if (HUD) 
+	{
 		// Access the playerHealthWidget from the HUD.
 		if (HUD->playerHealthWidget)
 		{
@@ -277,6 +278,7 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 	damageCaused = FMath::Min(playerCurrentHealth, damageCaused);
 
 	playerCurrentHealth -= damageCaused;
+
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Damage caused to player"));
 
 	if (playerCurrentHealth <= 0)
@@ -313,7 +315,7 @@ void AStealthPlayerCharacter::FireGun()
 				DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, false, -1, 0, 1);
 
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
-				UE_LOG(LogTemp, Warning, TEXT("I have hit: "), hit.GetActor());
+				
 			
 			}
 
@@ -384,7 +386,7 @@ void AStealthPlayerCharacter::StartZoom()
 
 void AStealthPlayerCharacter::StopZoom()
 {
-	firstPersonCamera->SetFieldOfView(90);
+	firstPersonCamera->SetFieldOfView(110);
 	isAimedIn = false;
 }
 

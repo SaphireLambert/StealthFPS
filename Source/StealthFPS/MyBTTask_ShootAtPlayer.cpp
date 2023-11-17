@@ -18,12 +18,13 @@ EBTNodeResult::Type UMyBTTask_ShootAtPlayer::ExecuteTask(UBehaviorTreeComponent&
 {
 	if (auto* const cont = Cast<AEnemyAI_Controller>(ownerComp.GetAIOwner()))
 	{
-		enemySoldier = GetWorld()->SpawnActor<AEnemySoldier>(EnemySoldierClass, cont->GetPawn()->GetActorLocation(), cont->GetPawn()->GetActorRotation());
 
 		if (enemySoldier)
 		{
 			enemySoldier->ShootShotGun();
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Shooting Gun"));
+			return EBTNodeResult::Succeeded;
 		}
 	}
-	return EBTNodeResult::Type();
+	return EBTNodeResult::Failed;
 }

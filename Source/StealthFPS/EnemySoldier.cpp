@@ -96,14 +96,16 @@ void AEnemySoldier::ShootShotGun()
 	FCollisionQueryParams queryparameters;
 	queryparameters.AddIgnoredActor(this);
 
-	bool isHit = UKismetSystemLibrary::SphereTraceSingle(this, startTrace, endTrace, 50, UEngineTypes::ConvertToTraceType(ECC_Visibility), true, TArray<AActor*>(), EDrawDebugTrace::ForOneFrame, hit, true);
+	bool isHit = UKismetSystemLibrary::SphereTraceSingle(this, startTrace, endTrace, 50, UEngineTypes::ConvertToTraceType(ECC_Visibility), true, TArray<AActor*>(), EDrawDebugTrace::ForDuration, hit, true);
 
 
 	if (isHit)
 	{
 		FPointDamageEvent damageEvent(33, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
 		hit.GetActor()->TakeDamage(33, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
-		DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Red, true, -1, 0, 1);
+		//DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Red, true, -1, 0, 1);
+
+		UE_LOG(LogTemp, Warning, TEXT("I have hit: "), hit.GetActor());
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Player"));
 
@@ -112,6 +114,8 @@ void AEnemySoldier::ShootShotGun()
 
 void AEnemySoldier::EnemyDied()
 {
+	Destroy();
+
 	bodyMesh->SetSimulatePhysics(true);//Creates the ragdoll effect
 
 	DetachFromControllerPendingDestroy();//Detaches the enemy AI controller to that its no longer active afer the enemy is dead. 
