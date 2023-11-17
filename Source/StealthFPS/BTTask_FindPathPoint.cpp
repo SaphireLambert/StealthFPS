@@ -5,6 +5,21 @@
 #include "EnemyAI_Controller.h"
 #include "EnemySoldier.h"
 #include "BehaviorTree/BlackboardComponent.h"
+//#include "string.h"
+
+#include "CoreMinimal.h"
+#include "Misc/Paths.h"
+#include "Containers/UnrealString.h"
+
+// Function to convert a double to a string
+FString DoubleToString(double Value)
+{
+	// Convert the double to an FString
+	FString StringValue = FString::SanitizeFloat(Value);
+
+	// Return the converted FString
+	return StringValue;
+}
 
 UBTTask_FindPathPoint::UBTTask_FindPathPoint(FObjectInitializer const& objectInializer) :
 	UBTTask_BlackboardBase{objectInializer}
@@ -27,19 +42,25 @@ EBTNodeResult::Type UBTTask_FindPathPoint::ExecuteTask(UBehaviorTreeComponent& o
 			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("Able to cast to blackboard"));
 
 			// Cast to AEnemySoldier
-			if (auto* const npc = Cast<AEnemySoldier>(cont->GetPawn())) //Code wont cast to the enemy soldier class
+			if (auto* npc = Cast<AEnemySoldier>(cont->GetPawn())) //Code wont cast to the enemy soldier class
 			{
+				//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Entered the if statement"));
 				auto const pathPoint = npc->GetPatrolPath()->GetPatrolPoint(index);
+
+				// Debug line to find the position of pathPoint
+				FString targetPosString = pathPoint.ToString();
+				UE_LOG(LogTemp, Warning, TEXT("Vector as a string: %s"), *targetPosString);
+				//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Path point pos"));
+
 				auto const globalPoint = npc->GetPatrolPath()->GetActorTransform().TransformPosition(pathPoint);
 				bc->SetValueAsVector(patrolPathVectorKey.SelectedKeyName, globalPoint);
 
+				//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("JUst before success"));
 				// Finish with success
 				FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);
 				return EBTNodeResult::Succeeded;
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Found the path point"));
 			}
 		}
 	}
-
 	return EBTNodeResult::Failed;
 }

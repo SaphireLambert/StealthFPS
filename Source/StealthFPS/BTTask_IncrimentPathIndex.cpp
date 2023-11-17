@@ -28,7 +28,7 @@ EBTNodeResult::Type UBTTask_IncrimentPathIndex::ExecuteTask(UBehaviorTreeCompone
 				auto const maxIndex = noOfPoints - 1;
 				auto index = BC->GetValueAsInt(GetSelectedBlackboardKey());
 
-				//Change the direcvt9ion if we are the at the first or last index and if we are in BIdirectional mode
+				//Change the direction if we are the at the first or last index and if we are in BiDirectional mode
 				if (bBiDirectional)
 				{
 					if (index >= maxIndex && direction == EDirectionType::forward)

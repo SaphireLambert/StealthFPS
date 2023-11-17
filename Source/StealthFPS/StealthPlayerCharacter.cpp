@@ -133,15 +133,6 @@ void AStealthPlayerCharacter::Tick(float DeltaTime)
 	{
 		PerformInteractionCheck();
 	}
-
-	if (HUD) 
-	{
-		// Access the playerHealthWidget from the HUD.
-		if (HUD->playerHealthWidget)
-		{
-			HUD->playerHealthWidget->UpdateHealthPercent(playerMaxHealth, playerCurrentHealth);
-		}
-	}
 }
 
 void AStealthPlayerCharacter::PerformInteractionCheck()
@@ -280,6 +271,15 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 	playerCurrentHealth -= damageCaused;
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Damage caused to player"));
+
+	if (HUD) 
+	{
+		// Access the playerHealthWidget from the HUD.
+		if (HUD->playerHealthWidget)
+		{
+			HUD->playerHealthWidget->UpdateHealthPercent(playerMaxHealth, playerCurrentHealth);
+		}
+	}
 
 	if (playerCurrentHealth <= 0)
 	{
