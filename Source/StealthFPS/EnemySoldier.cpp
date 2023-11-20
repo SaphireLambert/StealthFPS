@@ -88,7 +88,7 @@ void AEnemySoldier::ShootShotGun()
 {
 	FHitResult hit;
 
-	const float weaponRange = 750;
+	const float weaponRange = 400.0f;
 	const FVector startTrace = muzzleLocation->GetComponentLocation();
 	const FVector forwardVector = muzzleLocation->GetForwardVector();
 	const FVector endTrace = (forwardVector * weaponRange) + startTrace;
@@ -97,22 +97,18 @@ void AEnemySoldier::ShootShotGun()
 	queryparameters.AddIgnoredActor(this);
 
 
-	bool isHit = UKismetSystemLibrary::SphereTraceSingle(this, startTrace, endTrace, 50, UEngineTypes::ConvertToTraceType(ECC_Visibility), true, TArray<AActor*>(), EDrawDebugTrace::ForDuration, hit, true);
+	bool isHit = UKismetSystemLibrary::SphereTraceSingle(this, startTrace, endTrace, 40.0f, UEngineTypes::ConvertToTraceType(ECC_Visibility), true, TArray<AActor*>(), EDrawDebugTrace::ForDuration, hit, true);
 	//bool isHit = GetWorld()->LineTraceSingleByChannel(hit, startTrace, endTrace, ECC_Visibility, queryparameters);
 
 
 
 	if (isHit)
 	{
-
-		FPointDamageEvent damageEvent(33, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
-		hit.GetActor()->TakeDamage(33, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
-		//DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Red, true, -1, 0, 1);
-
-		UE_LOG(LogTemp, Warning, TEXT("I have hit: "), hit.GetActor());
-
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("Hit Player"));
-
+		if (auto* player = Cast<AStealthPlayerCharacter>(hit.GetActor()))
+		{
+			FPointDamageEvent damageEvent(33, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
+			player->TakeDamage(33, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
+		}
 	}
 }
 

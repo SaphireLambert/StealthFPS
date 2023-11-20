@@ -18,12 +18,14 @@ EBTNodeResult::Type UMyBTTask_ShootAtPlayer::ExecuteTask(UBehaviorTreeComponent&
 {
 	if (auto* const cont = Cast<AEnemyAI_Controller>(ownerComp.GetAIOwner()))
 	{
-
-		if (enemySoldier)
+		if (auto* npc = Cast<AEnemySoldier>(cont->GetCharacter()))
 		{
-			enemySoldier->ShootShotGun();
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Shooting Gun"));
-			return EBTNodeResult::Succeeded;
+			if (npc)
+			{
+				npc->ShootShotGun();
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Shooting Gun"));
+				return EBTNodeResult::Succeeded;
+			}
 		}
 	}
 	return EBTNodeResult::Failed;
