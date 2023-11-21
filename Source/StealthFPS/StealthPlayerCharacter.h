@@ -66,11 +66,11 @@ public:
 	UPlayerHealthBar* playerHealthWidget;
 
 	//The turn rate for the camera look variable Horizontal
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "camera")
 		float turnVerticalRate;
 
 	//The turn rate for the camera look variable Vertical
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "camera")
 		float turnHorizontalRate;
 
 	//==================================================================
