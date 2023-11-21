@@ -7,6 +7,7 @@
 #include "NavigationSystem.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "EnemySoldier.h"
+#include "TimerManager.h"
 
 UMyBTTask_ShootAtPlayer::UMyBTTask_ShootAtPlayer(FObjectInitializer const& objectInitializer) :
 	UBTTask_BlackboardBase{objectInitializer}

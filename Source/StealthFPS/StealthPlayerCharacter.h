@@ -60,11 +60,18 @@ public:
 	bool isCrouched;
 	
 	//a float that can be called to deal damage to the player from other classes 
-	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, 
-	class AController* eventInstigator, AActor* damageCauser);
+	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser)override;
 
 	UPROPERTY()
 	UPlayerHealthBar* playerHealthWidget;
+
+	//The turn rate for the camera look variable Horizontal
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "camera")
+		float turnVerticalRate;
+
+	//The turn rate for the camera look variable Vertical
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "camera")
+		float turnHorizontalRate;
 
 	//==================================================================
 	// FUNCTIONS
@@ -108,6 +115,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
 		class UCameraComponent* firstPersonCamera;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
+		class UParticleSystemComponent* MuzzleEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
+		class USoundBase* GunShotSilenced;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	float MaxAmmoReserve;
@@ -125,13 +137,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 		FVector gunOffset;
 
-	//The turn rate for the camera look variable Horizontal
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
-		float turnVerticalRate;
-
-	//The turn rate for the camera look variable Vertical
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "camera")
-		float turnHorizontalRate;
 
 	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
 	TScriptInterface<IInteractInterface> targetInteractable;
@@ -170,6 +175,7 @@ protected:
 
 	//Shoots the weapon
 	void FireGun();
+	void Projectile();
 
 	//reloads the current weapon allowing player to shoot the gun again 
 	void ReloadWeapon();

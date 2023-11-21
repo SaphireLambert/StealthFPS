@@ -23,4 +23,6 @@ public:
 
 	UPROPERTY()
 	AEnemySoldier* enemySoldier;
+
+
 };

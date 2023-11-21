@@ -19,7 +19,6 @@ public:
 	// PROPERIES AND VARIABLES
 	//==================================================================
 
-	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser);
 
 	UPROPERTY(EditAnywhere)
 	class AEnemyAI_Controller* EnemyControllerClass;
@@ -31,6 +30,7 @@ public:
 	// FUNCTIONS
 	//==================================================================
 
+	virtual float TakeDamage(float damageAmount, struct FDamageEvent const& damageEvent, class AController* eventInstigator, AActor* damageCauser)override;
 
 	UBehaviorTree* GetBehaviorTree() const;
 
@@ -43,6 +43,8 @@ public:
 	// Called every frame
 	virtual void Tick(float deltaTime) override;
 
+	UFUNCTION()
+	void Fire();
 	UFUNCTION()
 	void ShootShotGun();
 	void EnemyDied();
@@ -71,6 +73,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	AEnemyPatrolPath* patrolPath;
 
+	// Animation
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
+	UAnimationAsset* fireingGun;
+
+	FTimerHandle DelayedFunctionHandle;
+
+	// Particle Effect
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
+	UParticleSystemComponent* ShotGunMuzzleFlash;
+
+
+	UPROPERTY()
+	FTimerHandle shootingTimerHandle;
 
 	//==================================================================
 	// FUNCTIONS

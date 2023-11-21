@@ -1,19 +1,22 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+//GAME
 #include "EnemySoldier.h"
+#include "StealthPlayerCharacter.h"
+#include "EnemyAI_Controller.h"
+
+//ENGINE
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
-#include "StealthPlayerCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/Controller.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "EnemyAI_Controller.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AEnemySoldier::AEnemySoldier()
@@ -37,6 +40,11 @@ AEnemySoldier::AEnemySoldier()
 	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
 	muzzleLocation->SetupAttachment(gunMesh);
 	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
+
+	ShotGunMuzzleFlash = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Muzzle Flash"));
+	ShotGunMuzzleFlash->SetupAttachment(muzzleLocation);
+	ShotGunMuzzleFlash->SetAutoActivate(false);
+	
 }
 
 // Called when the game starts or when spawned
@@ -84,7 +92,7 @@ float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEv
 	return damageAmount;
 }
 
-void AEnemySoldier::ShootShotGun()
+void AEnemySoldier::Fire()
 {
 	FHitResult hit;
 
@@ -94,22 +102,22 @@ void AEnemySoldier::ShootShotGun()
 	const FVector endTrace = (forwardVector * weaponRange) + startTrace;
 
 	FCollisionQueryParams queryparameters;
-	queryparameters.AddIgnoredActor(this);
-
 
 	bool isHit = UKismetSystemLibrary::SphereTraceSingle(this, startTrace, endTrace, 40.0f, UEngineTypes::ConvertToTraceType(ECC_Visibility), true, TArray<AActor*>(), EDrawDebugTrace::ForDuration, hit, true);
-	//bool isHit = GetWorld()->LineTraceSingleByChannel(hit, startTrace, endTrace, ECC_Visibility, queryparameters);
-
-
 
 	if (isHit)
 	{
-		if (auto* player = Cast<AStealthPlayerCharacter>(hit.GetActor()))
-		{
-			FPointDamageEvent damageEvent(33, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
-			player->TakeDamage(33, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
-		}
+		FPointDamageEvent damageEvent(33, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
+		hit.GetActor()->TakeDamage(33, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("RayCast Hit Actor"));
 	}
+}
+
+void AEnemySoldier::ShootShotGun()
+{
+	gunMesh->PlayAnimation(fireingGun, false);
+	GetWorldTimerManager().SetTimer(DelayedFunctionHandle, this, &AEnemySoldier::Fire, 0.5, true); //Attempt to add a delay to the fireing of the gun towards the player. 
+	//Fire();
 }
 
 void AEnemySoldier::EnemyDied()

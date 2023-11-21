@@ -19,6 +19,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/AudioComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 
 // Sets default values before instanciation 
@@ -29,7 +30,8 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	//Finn has edited \/
 
-	GetCapsuleComponent()->InitCapsuleSize(20, 95); // Sets the size for the capsule component for the player character. 
+	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	turnHorizontalRate = 45;
 	turnVerticalRate = 45;
@@ -63,6 +65,10 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	muzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle Location"));
 	muzzleLocation->SetupAttachment(gunMesh);
 	muzzleLocation->SetRelativeLocation(FVector(0.2f, 22, 9.4f));
+
+	MuzzleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Muzzle Flash"));
+	MuzzleEffect->SetupAttachment(muzzleLocation);
+	MuzzleEffect->SetAutoActivate(false);
 
 	// Create an audio component
 	//audioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
@@ -285,27 +291,31 @@ void AStealthPlayerCharacter::FireGun()
 {
 	if (CurrentAmmoClip > 0)
 	{
-		FHitResult hit;
-
-		const float weaponRange = 2500;
-		const FVector startTrace = muzzleLocation->GetComponentLocation();
-		const FVector forwardVector = firstPersonCamera->GetForwardVector();
-		const FVector endTrace = (forwardVector * weaponRange) + startTrace;
-
-		FCollisionQueryParams queryparameters;
-		queryparameters.AddIgnoredActor(this);
-
-		bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_Camera, queryparameters);
-
-		if (isHit)
-		{
-			FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
-			hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
-			DrawDebugLine(GetWorld(), startTrace, endTrace, FColor::Green, false, 0.5f, 0, 1);
-
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hit Actor"));
-		}
+		UGameplayStatics::PlaySoundAtLocation(this, GunShotSilenced, muzzleLocation->GetComponentLocation());
+		MuzzleEffect->Activate();
+		Projectile();
 		CurrentAmmoClip--;
+	}
+}
+
+void AStealthPlayerCharacter::Projectile()
+{
+	FHitResult hit;
+
+	const float weaponRange = 2500;
+	const FVector startTrace = muzzleLocation->GetComponentLocation();
+	const FVector forwardVector = firstPersonCamera->GetForwardVector();
+	const FVector endTrace = (forwardVector * weaponRange) + startTrace;
+
+	FCollisionQueryParams queryparameters;
+	queryparameters.AddIgnoredActor(this);
+
+	bool isHit = GetWorld()->LineTraceSingleByChannel(OUT hit, startTrace, endTrace, ECC_Camera, queryparameters);
+
+	if (isHit)
+	{
+		FPointDamageEvent damageEvent(100, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
+		hit.GetActor()->TakeDamage(100, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
 	}
 }
 
