@@ -40,7 +40,7 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	bodyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Character Mesh"));
 
 	bodyMesh->SetOnlyOwnerSee(true);
-	bodyMesh->SetupAttachment(GetCapsuleComponent());
+	bodyMesh->SetupAttachment(firstPersonCamera);
 	bodyMesh->bCastDynamicShadow = false;
 	bodyMesh->CastShadow = false;
 	bodyMesh->AddRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
@@ -49,14 +49,14 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 
 	//Setip for the first person camera
 	firstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("First Person Camera"));
-	firstPersonCamera->SetupAttachment(bodyMesh);
+	firstPersonCamera->SetupAttachment(GetCapsuleComponent());
 	firstPersonCamera->SetRelativeLocation(FVector(20, 1.75f, 78));
 	firstPersonCamera->bUsePawnControlRotation = true;
 
 
 	//Setup for the gun mesh
 	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
-
+	gunMesh->SetupAttachment(bodyMesh);
 	gunMesh->SetOnlyOwnerSee(true);
 	gunMesh->bCastDynamicShadow = false;
 	gunMesh->CastShadow = false;
