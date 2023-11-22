@@ -201,4 +201,8 @@ protected:
 	//Allows the player to crouch in the game reducing chance to be seen. 
 	void StartCrouch();
 	void StopCrouch();
+
+	//Allows the player to lean left or right
+	void LeanRight();
+	void LeanLeft();
 };

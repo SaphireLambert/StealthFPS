@@ -94,6 +94,8 @@ float AEnemySoldier::TakeDamage(float damageAmount, FDamageEvent const& damageEv
 
 void AEnemySoldier::Fire()
 {
+	gunMesh->PlayAnimation(fireingGun, false);
+
 	FHitResult hit;
 
 	const float weaponRange = 400.0f;
@@ -115,9 +117,7 @@ void AEnemySoldier::Fire()
 
 void AEnemySoldier::ShootShotGun()
 {
-	gunMesh->PlayAnimation(fireingGun, false);
-	GetWorldTimerManager().SetTimer(DelayedFunctionHandle, this, &AEnemySoldier::Fire, 0.5, true); //Attempt to add a delay to the fireing of the gun towards the player. 
-	//Fire();
+	GetWorldTimerManager().SetTimer(DelayedFunctionHandle, this, &AEnemySoldier::Fire, 0.5, true); //Adds a delay for the firing function
 }
 
 void AEnemySoldier::EnemyDied()

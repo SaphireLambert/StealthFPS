@@ -70,11 +70,6 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	MuzzleEffect->SetupAttachment(muzzleLocation);
 	MuzzleEffect->SetAutoActivate(false);
 
-	// Create an audio component
-	//audioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
-	//audioComponent->bAutoActivate = false; // Do not play the sound immediately upon creation
-
-
 	//Setup for the player health
 	playerCurrentHealth = playerMaxHealth;
 
@@ -115,6 +110,8 @@ void AStealthPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AStealthPlayerCharacter::BeginInteract);
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Released, this, &AStealthPlayerCharacter::EndInteract);
+
+	PlayerInputComponent->BindAction(TEXT("LeanRight"), IE_Released, this, &AStealthPlayerCharacter::LeanRight);
 
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &AStealthPlayerCharacter::StartCrouch);
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AStealthPlayerCharacter::StopCrouch);
@@ -161,8 +158,6 @@ void AStealthPlayerCharacter::PerformInteractionCheck()
 		{
 			if (traceHit.GetActor()->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 			{
-				
-
 				if (traceHit.GetActor() != interactionData.currentInteractable)
 				{
 					FoundInteractable(traceHit.GetActor());
@@ -401,6 +396,15 @@ void AStealthPlayerCharacter::StopCrouch()
 	ACharacter::UnCrouch();
 
 	isCrouched = false;
+}
+
+void AStealthPlayerCharacter::LeanRight()
+{
+	
+}
+
+void AStealthPlayerCharacter::LeanLeft()
+{
 }
 
 
