@@ -65,6 +65,12 @@ public:
 	UPROPERTY()
 	UPlayerHealthBar* playerHealthWidget;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UUserWidget> looseConditionClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+		UUserWidget* looseCondition;
+
 	//The turn rate for the camera look variable Horizontal
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "camera")
 		float turnVerticalRate;

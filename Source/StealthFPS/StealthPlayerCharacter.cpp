@@ -88,6 +88,9 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	MaxAmmmoClip = 1;
 	CurrentAmmoReserve = 10;
 	CurrentAmmoClip = 1;
+
+	//Reference to the loose condition UI widget 
+	looseCondition = CreateWidget<UUserWidget>(GetWorld(), looseConditionClass);
 }
 
 // Called to bind functionality to input
@@ -276,7 +279,11 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 	if (playerCurrentHealth <= 0)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player Has Died"));
-		Destroy();
+		if (looseConditionClass)
+		{
+			looseCondition->SetVisibility(ESlateVisibility::Collapsed);
+			looseCondition->AddToViewport(10);
+		}
 	}
 	
 	return damageCaused;
