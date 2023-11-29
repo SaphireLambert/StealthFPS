@@ -109,9 +109,8 @@ void AEnemySoldier::Fire()
 
 	if (isHit)
 	{
-		FPointDamageEvent damageEvent(33, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
-		hit.GetActor()->TakeDamage(33, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("RayCast Hit Actor"));
+		FPointDamageEvent damageEvent(31, hit, forwardVector, nullptr); //Calls the damage event to deal damage to whatever the gun hit
+		hit.GetActor()->TakeDamage(31, damageEvent, GetInstigatorController(), this);//Damages the actor that the raycast hit
 	}
 }
 

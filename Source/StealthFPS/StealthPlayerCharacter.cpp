@@ -22,13 +22,12 @@
 #include "Particles/ParticleSystemComponent.h"
 
 
+
 // Sets default values before instanciation 
 AStealthPlayerCharacter::AStealthPlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	//Finn has edited \/
 
 	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -88,9 +87,6 @@ AStealthPlayerCharacter::AStealthPlayerCharacter()
 	MaxAmmmoClip = 1;
 	CurrentAmmoReserve = 10;
 	CurrentAmmoClip = 1;
-
-	//Reference to the loose condition UI widget 
-	looseCondition = CreateWidget<UUserWidget>(GetWorld(), looseConditionClass);
 }
 
 // Called to bind functionality to input
@@ -128,6 +124,14 @@ void AStealthPlayerCharacter::BeginPlay()
 	gunMesh->AttachToComponent(bodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("GripPoint"));	
 
 	HUD = Cast<APlayerCharacterHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+
+	//Reference to the loose condition UI widget 
+	if (looseConditionClass)
+	{
+		looseCondition = CreateWidget<UUserWidget>(GetWorld(), looseConditionClass);
+		looseCondition->AddToViewport(10);
+		looseCondition->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 // Called every frame
@@ -274,16 +278,9 @@ float AStealthPlayerCharacter::TakeDamage(float damageAmount, FDamageEvent const
 
 	playerCurrentHealth -= damageCaused;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Damage caused to player"));
-
 	if (playerCurrentHealth <= 0)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Player Has Died"));
-		if (looseConditionClass)
-		{
-			looseCondition->SetVisibility(ESlateVisibility::Collapsed);
-			looseCondition->AddToViewport(10);
-		}
+		Died();
 	}
 	
 	return damageCaused;
@@ -412,6 +409,15 @@ void AStealthPlayerCharacter::LeanRight()
 
 void AStealthPlayerCharacter::LeanLeft()
 {
+}
+
+void AStealthPlayerCharacter::Died()
+{
+	//Makes my UI window visible
+	looseCondition->SetVisibility(ESlateVisibility::Visible);
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	PlayerController->SetInputMode(FInputModeUIOnly());
+	PlayerController->bShowMouseCursor = true;
 }
 
 

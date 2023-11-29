@@ -44,7 +44,7 @@ public:
 	float playerCurrentHealth; 
 
 	//Store the players maximum health
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterAttributes")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterAttributes")
 	float playerMaxHealth = 100;
 
 	//Stores the player damage
@@ -65,7 +65,7 @@ public:
 	UPROPERTY()
 	UPlayerHealthBar* playerHealthWidget;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	UPROPERTY(EditAnywhere, Category = "Widgets")
 	TSubclassOf<UUserWidget> looseConditionClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
@@ -211,4 +211,6 @@ protected:
 	//Allows the player to lean left or right
 	void LeanRight();
 	void LeanLeft();
+
+	void Died();
 };
