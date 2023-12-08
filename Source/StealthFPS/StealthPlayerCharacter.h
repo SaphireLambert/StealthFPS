@@ -79,6 +79,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "camera")
 		float turnHorizontalRate;
 
+	UPROPERTY();
+		FTimerHandle UnusedHandle;
+
 	//==================================================================
 	// FUNCTIONS
 	//==================================================================

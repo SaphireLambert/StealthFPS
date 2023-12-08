@@ -295,6 +295,10 @@ void AStealthPlayerCharacter::FireGun()
 		Projectile();
 		CurrentAmmoClip--;
 	}
+	else if (CurrentAmmoClip == 0 && CurrentAmmoReserve > 0)
+	{
+		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AStealthPlayerCharacter::ReloadWeapon, 2, false);
+	}
 }
 
 void AStealthPlayerCharacter::Projectile()
